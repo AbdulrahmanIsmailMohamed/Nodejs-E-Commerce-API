@@ -11,10 +11,9 @@ if (process.env.NODE_ENV === 'development') {
     console.log(`mode: ${process.env.NODE_ENV}`);
 }
 
-
-app.get("/", (req, res) => {
-    res.send('Hello World')
-})
+// routes
+const categoryRoute = require('./routes/category.routes');
+app.use('/categories', categoryRoute)
 
 // listing server and connect DB
 const connectDB = require("./config/connect");
