@@ -12,14 +12,19 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // routes
+const api = process.env.API
 const categoryRoute = require('./routes/category.routes');
-app.use('/categories', categoryRoute)
+app.use(`${api}/categories`, categoryRoute)
+
 
 // listing server and connect DB
 const connectDB = require("./config/connect");
 const server = async () => {
     await connectDB()
     const port = process.env.PORT || 3333
-    app.listen(port, () => console.log(`The Server Running In Port ${port}`));
+    app.listen(port, () => {
+        console.log(`The Server Running In Port ${port}`)
+        console.log(`URL: http://localhost:${port}`)
+    });
 }
 server();
