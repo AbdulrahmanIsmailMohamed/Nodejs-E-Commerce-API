@@ -27,7 +27,6 @@ app.all('*', (req, res, nxt) => {
 // Glopal Error Handling Middleware In Express
 app.use(errorHandling);
 
-
 // listing server 
 const port = process.env.PORT || 3333
 const server = app.listen(port, () => {
@@ -35,16 +34,28 @@ const server = app.listen(port, () => {
     console.log(`The Server Running In Port ${port}`);
 });
 
-// Handling synchronous exciption
-process.on("uncaughtException", (err) => {
-    console.log(`unhandlingException:: nameError: ${err.name} | errorMessage: ${err.message}`);
-});
-
-// Handling Asynchronouns 
+// Any error can happen out express
+// Handling Asynchronous
 process.on("unhandledRejection", (err) => {
+    console.log({
+        unhandledRejection: true,
+        nameError: `${err.name} `,
+        message: `${err.message}`,
+        stack: `${err.stack}`
+    });
     server.close(() => {
         console.log("Server Shut Down....");
-        console.log(`UnHandledRejection:: nameError: ${err.name} | errorMessage: ${err.message}`);
         process.exit(1);
-    })
-})
+    });
+});
+
+// Handling synchronous exciption
+process.on("uncaughtException", (err) => {
+    console.log({
+        unhandlingException: true,
+        nameError: `${err.name} `,
+        message: `${err.message}`,
+        stack: `${err.stack}`
+    });
+});
+
