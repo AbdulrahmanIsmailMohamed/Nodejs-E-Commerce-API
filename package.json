@@ -4,16 +4,19 @@
   "description": "Nodejs E-Commerce-API",
   "main": "server.js",
   "scripts": {
-    "start": "Node server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:dev": "Node server",
+    "start:prod": "NODE_ENV=production node server",
+    "start:prod:win": "set NODE_ENV=production && node server"
   },
   "author": "Abdulrahman Ismail",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-validator": "^6.15.0",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0",
+    "p-retry": "^5.1.2",
     "slugify": "^1.6.5"
   }
 }

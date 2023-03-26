@@ -1,23 +1,20 @@
 const Category = require("../models/Categories");
 const asyncHandler = require("../middlewares/asyncHandler");
 const slugify = require("slugify");
+const APIError = require("../util/APIError");
 
 /**
-    @access public
+    @access private
 */
 const createCategory = asyncHandler(async (req, res) => {
     const name = req.body.name;
     const category = await Category.create({ name, slag: slugify(name) });
-    if (!category) {
-        return res
-            .status(400)
-            .json({ success: false, message: "The Category Can't Be Created" });
-    }
+    if (!category) return next(new APIError("The Category Can't Be Created!", 400));
     res.status(201).json({ success: true, category: category })
 });
 
 /**
-    @access private 
+    @access public 
 */
 const getAllcategories = asyncHandler(async (req, res) => {
     // pagination
@@ -26,11 +23,7 @@ const getAllcategories = asyncHandler(async (req, res) => {
     let skip = (page - 1) * limit;
 
     const categories = await Category.find().skip(skip).limit(limit);
-    if (!categories) {
-        return res
-            .status(404)
-            .json({ success: false, message: "The Categories Not Found" });
-    }
+    if (!categories) return next(new APIError("The Categories Not Found!", 404));
     res.status(200).json({ result: categories.length, page: page, categories: categories })
 })
 
@@ -39,11 +32,7 @@ const getAllcategories = asyncHandler(async (req, res) => {
 */
 const getCategory = asyncHandler(async (req, res) => {
     const category = await Category.findById(req.params.id);
-    if (!category) {
-        return res
-            .status(404)
-            .json({ success: false, message: "The Categories Not Found" });
-    }
+    if (!category) return next(new APIError("The Category Not Found!", 404));
     res.status(200).json({ success: true, category: category });
 });
 
@@ -62,24 +51,16 @@ const updateCategory = asyncHandler(async (req, res) => {
         },
         { new: true }
     );
-    if (!category) {
-        return res
-            .status(404)
-            .json({ success: false, message: "The Categories Not Found" });
-    }
+    if (!category) return next(new APIError("The Category Not Found!", 404));
     res.status(200).json({ success: true, category: category });
 });
 
 /**
-@access private
+    @access private
 */
 const deleteCategory = asyncHandler(async (req, res) => {
     const category = await Category.findByIdAndUpdate(req.params.id);
-    if (!category) {
-        return res
-            .status(404)
-            .json({ success: false, message: "The Categories Not Found" });
-    }
+    if (!category) return next(new APIError("The Category Not Found!", 404));
     res.status(200).json({ success: true });
 });
 

@@ -1,6 +1,10 @@
 const express = require("express");
 const morgan = require("morgan");
-require("dotenv").config()
+require("dotenv").config();
+const errorHandling = require("./middlewares/errorHandling");
+const APIError = require("./util/APIError");
+const connectDB = require("./config/connect");
+
 const app = express();
 
 // middleware
@@ -16,19 +20,31 @@ const api = process.env.API
 const categoryRoute = require('./routes/category.routes');
 app.use(`${api}/categories`, categoryRoute)
 
-// error Handling Middleware
-const errorHandling = require("./middlewares/errorHandling");
-errorHandling.routeError(app)
-app.use(errorHandling.errorHandling);
+app.all('*', (req, res, nxt) => {
+    nxt(new APIError(`Can't Find This Route ${req.originalUrl}!!`, 400))
+});
 
-// listing server and connect DB
-const connectDB = require("./config/connect");
-const server = async () => {
-    await connectDB()
-    const port = process.env.PORT || 3333
-    app.listen(port, () => {
-        console.log(`The Server Running In Port ${port}`)
-        console.log(`URL: http://localhost:${port}`)
-    });
-}
-server();
+// Glopal Error Handling Middleware In Express
+app.use(errorHandling);
+
+
+// listing server 
+const port = process.env.PORT || 3333
+const server = app.listen(port, () => {
+    console.log(`URL: http://localhost:${port}/api/v1`);
+    console.log(`The Server Running In Port ${port}`);
+});
+
+// Handling synchronous exciption
+process.on("uncaughtException", (err) => {
+    console.log(`unhandlingException:: nameError: ${err.name} | errorMessage: ${err.message}`);
+});
+
+// Handling Asynchronouns 
+process.on("unhandledRejection", (err) => {
+    server.close(() => {
+        console.log("Server Shut Down....");
+        console.log(`UnHandledRejection:: nameError: ${err.name} | errorMessage: ${err.message}`);
+        process.exit(1);
+    })
+})

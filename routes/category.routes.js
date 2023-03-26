@@ -7,8 +7,21 @@ const {
     deleteCategory
 } = require("../controllers/category.controller");
 
-router.route('/').post(createCategory).get(getAllcategories)
+const {
+    categoryIdValidator,
+    createCategoryValidator,
+    updateCategoryValidator
+} = require("../util/validator/categoryValidator");
 
-router.route("/:id").patch(updateCategory).get(getCategory).delete(deleteCategory)
+router
+    .route('/')
+    .post(createCategoryValidator, createCategory)
+    .get(getAllcategories);
+
+router
+    .route("/:id")
+    .patch(updateCategoryValidator, updateCategory)
+    .get(categoryIdValidator, getCategory)
+    .delete(deleteCategory, deleteCategory);
 
 module.exports = router
