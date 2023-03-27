@@ -1,13 +1,14 @@
+/* eslint-disable no-undef */
+const slugify = require("slugify");
 const Category = require("../models/Categories");
 const asyncHandler = require("../middlewares/asyncHandler");
-const slugify = require("slugify");
 const APIError = require("../util/APIError");
 
 /**
     @access private
 */
 const createCategory = asyncHandler(async (req, res) => {
-    const name = req.body.name;
+    const { name } = req.body;
     const category = await Category.create({ name, slag: slugify(name) });
     if (!category) return next(new APIError("The Category Can't Be Created!", 400));
     res.status(201).json({ success: true, category: category })
@@ -18,9 +19,9 @@ const createCategory = asyncHandler(async (req, res) => {
 */
 const getAllcategories = asyncHandler(async (req, res) => {
     // pagination
-    let page = req.query.page * 1 || 1;
-    let limit = req.query.limit * 1 || 5;
-    let skip = (page - 1) * limit;
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 5;
+    const skip = (page - 1) * limit;
 
     const categories = await Category.find().skip(skip).limit(limit);
     if (!categories) return next(new APIError("The Categories Not Found!", 404));
@@ -40,9 +41,9 @@ const getCategory = asyncHandler(async (req, res) => {
     @access private
 */
 const updateCategory = asyncHandler(async (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     console.log(id);
-    const name = req.body.name;
+    const { name } = req.body;
     const category = await Category.findByIdAndUpdate(
         { _id: id },
         {
@@ -51,6 +52,7 @@ const updateCategory = asyncHandler(async (req, res) => {
         },
         { new: true }
     );
+    // eslint-disable-next-line no-undef
     if (!category) return next(new APIError("The Category Not Found!", 404));
     res.status(200).json({ success: true, category: category });
 });

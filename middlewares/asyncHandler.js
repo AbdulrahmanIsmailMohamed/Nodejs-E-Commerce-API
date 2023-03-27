@@ -5,5 +5,5 @@ module.exports = (routeHandler) => {
         } catch (err) {
             next(err)
         }
-    }
-}
+    };
+};
