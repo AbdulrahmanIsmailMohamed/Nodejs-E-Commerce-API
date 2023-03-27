@@ -1,4 +1,6 @@
-const router = require('express').Router();
+// mergeParams: Allow us to access parameters on another routes
+// exam: we need to access categoryId From category routes
+const router = require('express').Router({ mergeParams: true });
 
 const {
     createSubCategory,
@@ -13,7 +15,6 @@ const {
     updateSubCategoryValidator,
     subCategoryIdValidator
 } = require('../util/validator/subCategoryValidator');
-
 
 router
     .route("/")

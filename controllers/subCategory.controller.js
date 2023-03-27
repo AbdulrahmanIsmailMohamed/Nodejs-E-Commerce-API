@@ -41,7 +41,10 @@ const getSubCategories = asyncHandler(async (req, res, next) => {
     const page = req.query.page * 1 || 1;
     const skip = (page - 1) * limit;
 
-    const subCategories = await SubCategory.find().skip(skip).limit(limit);
+    let filter = {}
+    if (req.params.categoryId) filter = { category: req.params.categoryId }
+    const subCategories = await SubCategory.find(filter).skip(skip).limit(limit)
+        .populate("category", "name -_id");
     if (!subCategories) return next(new APIError("The SubCategories is Not Found", 400));
     res.status(200).json({
         result: subCategories.length,

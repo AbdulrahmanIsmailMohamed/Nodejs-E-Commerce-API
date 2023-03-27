@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const subCategoryRoutes = require("./subCategory.routes");
 const {
     createCategory,
     getAllcategories,
@@ -12,6 +13,10 @@ const {
     createCategoryValidator,
     updateCategoryValidator
 } = require("../util/validator/categoryValidator");
+
+// nested route
+router.use("/:categoryId/sub-categories", subCategoryRoutes);
+
 
 router
     .route('/')
