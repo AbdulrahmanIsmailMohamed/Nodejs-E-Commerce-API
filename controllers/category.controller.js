@@ -9,7 +9,7 @@ const APIError = require("../util/APIError");
 */
 const createCategory = asyncHandler(async (req, res) => {
     const { name } = req.body;
-    const category = await Category.create({ name, slag: slugify(name) });
+    const category = await Category.create({ name, slug: slugify(name) });
     if (!category) return next(new APIError("The Category Can't Be Created!", 400));
     res.status(201).json({ success: true, category: category })
 });
@@ -41,14 +41,14 @@ const getCategory = asyncHandler(async (req, res) => {
     @access private
 */
 const updateCategory = asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    console.log(id);
+    const query = await Category.findById(req.params.id);
+    if (!req.body.name) req.body.name = query.name;
     const { name } = req.body;
     const category = await Category.findByIdAndUpdate(
-        { _id: id },
+        req.params.id,
         {
             name,
-            slag: slugify(name)
+            slug: slugify(name)
         },
         { new: true }
     );

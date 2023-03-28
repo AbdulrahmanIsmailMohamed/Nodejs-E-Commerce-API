@@ -11,7 +11,7 @@ const subCategorySchema = mongoose.Schema(
             maxLength: [32, "The name must be at most 32 characters long"],
             trim: true
         },
-        slag: {
+        slug: {
             type: String,
             lowercase: true
         },
@@ -21,9 +21,9 @@ const subCategorySchema = mongoose.Schema(
             required: [true, "The id of the category must be required"],
         }
     },
-    {timestamp: true}
+    { timestamps: true }
 );
 
-const SubCategory =  mongoose.model('SubCategory', subCategorySchema);
+const SubCategory = mongoose.model('SubCategory', subCategorySchema);
 
 module.exports = SubCategory

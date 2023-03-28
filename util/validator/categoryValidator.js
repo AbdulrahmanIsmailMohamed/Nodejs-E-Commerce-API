@@ -21,7 +21,11 @@ const updateCategoryValidator = [
     check("id")
         .isMongoId()
         .withMessage("Invalid Category Id Format!"),
+
     check("name")
+        .optional()
+        .notEmpty()
+        .withMessage("The Name Is not must be empty")
         .isLength({ min: "3" })
         .withMessage("The Name Is Short Category Name")
         .isLength({ max: "32" })

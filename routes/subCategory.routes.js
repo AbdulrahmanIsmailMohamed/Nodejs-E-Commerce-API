@@ -7,7 +7,8 @@ const {
     getSubCategories,
     updateSubCategory,
     deleteSubCategory,
-    getSubCategory
+    getSubCategory,
+    setCategoryId
 } = require('../controllers/subCategory.controller');
 
 const {
@@ -18,7 +19,7 @@ const {
 
 router
     .route("/")
-    .post(createSubCategoryValidator, createSubCategory)
+    .post(setCategoryId,createSubCategoryValidator, createSubCategory)
     .get(getSubCategories)
 
 router

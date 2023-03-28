@@ -10,7 +10,7 @@ const categorySchema = mongoose.Schema(
             maxLength: [32, `{VALUE} is long category name`]
         },
         // a and be => shopping.com/a-and-b
-        slag: {
+        slug: {
             type: String,
             lowercase: true
         }

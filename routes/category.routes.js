@@ -14,9 +14,11 @@ const {
     updateCategoryValidator
 } = require("../util/validator/categoryValidator");
 
-// nested route
+/**
+* * Nested Route
+* @UrlSource http://localhost:3333/api/v1/categories/:categoryId/sub-categories
+*/
 router.use("/:categoryId/sub-categories", subCategoryRoutes);
-
 
 router
     .route('/')

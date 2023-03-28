@@ -5,8 +5,10 @@ const errorHandling = require("./middlewares/errorHandling");
 const APIError = require("./util/APIError");
 require("./config/connect");
 
+// routes
 const categoryRoute = require('./routes/category.routes');
 const subcategoryRoute = require('./routes/subCategory.routes');
+const brandRoute = require('./routes/brand.routes');
 
 const app = express();
 
@@ -22,6 +24,7 @@ if (process.env.NODE_ENV === 'development') {
 const api = process.env.API
 app.use(`${api}/categories`, categoryRoute)
 app.use(`${api}/sub-categories`, subcategoryRoute)
+app.use(`${api}/brands`, brandRoute)
 
 app.all('*', (req, res, nxt) => {
     nxt(new APIError(`Can't Find This Route ${req.originalUrl}!!`, 400))
