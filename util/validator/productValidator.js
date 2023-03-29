@@ -1,8 +1,8 @@
-const slugify = require("slugify")
-const { check } = require("express-validator")
-const validatorMW = require("../../middlewares/validatorMW")
-const Category = require("../../models/Categories")
-const SubCategory = require("../../models/Sub-Category")
+const slugify = require("slugify");
+const { check } = require("express-validator");
+const validatorMW = require("../../middlewares/validatorMW");
+const Category = require("../../models/Categories");
+const SubCategory = require("../../models/Sub-Category");
 
 const productIdValidator = [
     check("id")
@@ -95,48 +95,56 @@ const createProductValidator = [
         .withMessage('Product must be belong to a category')
         .isMongoId()
         .withMessage('Invalid ID formate')
-        .custom((categoryId) =>
-            Category.findById(categoryId).then((category) => {
+        .custom(async (categoryId) => {
+            try {
+                const category = await Category.findById(categoryId)
                 if (!category) {
                     return Promise.reject(
                         new Error(`No category for this id: ${categoryId}`)
                     );
                 }
-            })
-        ),
+                return true;
+            } catch (err) {
+                console.log(err);
+            }
+        }),
 
-    check('subcategories')
+    check('subCategories')
         .optional()
         .isMongoId()
         .withMessage('Invalid ID formate')
-        .custom((subcategoriesIds) =>
-            SubCategory.find({ _id: { $exists: true, $in: subcategoriesIds } }).then(
-                (result) => {
-                    if (result.length < 1 || result.length !== subcategoriesIds.length) {
-                        return Promise.reject(new Error(`Invalid subcategories Ids`));
-                    }
+        .custom(async (subCategoriesIds) => {
+            try {
+                const subCategory = await SubCategory.find({ _id: { $exists: true, $in: subCategoriesIds } })
+                console.log(subCategory);
+                if (!subCategory) return Promise.reject(new Error(`Sub-Categories Ids Not Found`));
+                if (subCategory.length < 1 || subCategory.length !== subCategoriesIds.length) {
+                    return Promise.reject(new Error(`Invalid subcategories Ids`));
                 }
-            )
-        )
-        .custom((val, { req }) =>
-            SubCategory.find({ category: req.body.category }).then(
-                (subcategories) => {
-                    const subCategoriesIdsInDB = [];
-                    subcategories.forEach((subCategory) => {
-                        subCategoriesIdsInDB.push(subCategory._id.toString());
-                    });
-                    // check if subcategories ids in db include subcategories in req.body (true)
-                    const checker = (target, arr) => target.every((v) => arr.includes(v));
-                    if (!checker(val, subCategoriesIdsInDB)) {
-                        return Promise.reject(
-                            new Error(`subcategories not belong to category`)
-                        );
-                    }
-                }
-            )
-        ),
+                return true
+            } catch (err) {
+                console.log(err);
+            }
+        })
+    // .custom((val, { req }) =>
+    //     SubCategory.find({ category: req.body.category }).then(
+    //         (subcategories) => {
+    //             const subCategoriesIdsInDB = [];
+    //             subcategories.forEach((subCategory) => {
+    //                 subCategoriesIdsInDB.push(subCategory._id.toString());
+    //             });
+    //             // check if subcategories ids in db include subcategories in req.body (true)
+    //             const checker = (target, arr) => target.every((v) => arr.includes(v));
+    //             if (!checker(val, subCategoriesIdsInDB)) {
+    //                 return Promise.reject(
+    //                     new Error(`subcategories not belong to category`)
+    //                 );
+    //             }
+    //         }
+    //     )
+    // ),
 
-    check('brand')
+    , check('brand')
         .optional()
         .isMongoId()
         .withMessage('Invalid ID formate'),

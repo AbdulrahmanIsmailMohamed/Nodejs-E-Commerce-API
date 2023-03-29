@@ -35,7 +35,7 @@ const getProducts = asyncHandler(async (req, res, next) => {
     const limit = req.query.limit * 1 || 5;
     const skip = limit * (page - 1);
 
-    const products = await Product.find().skip(skip).limit(limit);
+    const products = await Product.find().skip(skip).limit(limit).populate("category", "name -_id");
     if (!products) return next(new APIError("Products Not Found", 404));
     res.status(200).json({
         success: true,
