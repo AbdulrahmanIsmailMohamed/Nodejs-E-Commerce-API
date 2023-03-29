@@ -6,17 +6,23 @@ const {
     updateProduct,
     getProduct,
     deleteProduct
-} = require("../controllers/product.controller")
+} = require("../controllers/product.controller");
+
+const {
+    createProductValidator,
+    updateProductValidator,
+    productIdValidator
+} = require("../util/validator/productValidator");
 
 router
     .route("/")
     .get(getProducts)
-    .post(createProduct)
+    .post(createProductValidator, createProduct)
 
 router
     .route("/:id")
-    .patch(updateProduct)
-    .delete(deleteProduct)
-    .get(getProduct)
+    .patch(updateProductValidator, updateProduct)
+    .delete(productIdValidator, deleteProduct)
+    .get(productIdValidator, getProduct)
 
 module.exports = router;

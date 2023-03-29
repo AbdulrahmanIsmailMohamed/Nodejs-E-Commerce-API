@@ -1,10 +1,8 @@
-const slugify = require("slugify");
 const asyncHandler = require('../middlewares/asyncHandler');
 const Product = require("../models/Product");
 const APIError = require("../util/APIError");
 
 const createProduct = asyncHandler(async (req, res, next) => {
-    req.body.slug = slugify(req.body.title);
     const product = await Product.create(req.body);
     if (!product) return next(new APIError("Product Can't be created!!", 400));
     res.status(201).json({

@@ -17,7 +17,7 @@ const productSchema = mongoose.Schema(
         description: {
             type: String,
             required: [true, "Product description is required"],
-            maxlength: [20, "The description must be less than 20 characters"],
+            maxlength: [2000, "The description must be less than 2000 characters"],
         },
         modelName: {
             type: String,
@@ -43,6 +43,10 @@ const productSchema = mongoose.Schema(
             type: Number
         },
         colors: [String],
+        imageCover: {
+            type: String,
+            required: [true, "The image cover of the product is required"],
+        },
         images: [String],
         category: {
             type: mongoose.Schema.Types.ObjectId,
