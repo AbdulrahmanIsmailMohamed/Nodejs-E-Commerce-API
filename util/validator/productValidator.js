@@ -2,6 +2,7 @@ const slugify = require("slugify");
 const { check } = require("express-validator");
 const validatorMW = require("../../middlewares/validatorMW");
 const Category = require("../../models/Categories");
+const Product = require("../../models/Product");
 const SubCategory = require("../../models/Sub-Category");
 
 const productIdValidator = [
@@ -126,25 +127,24 @@ const createProductValidator = [
                 console.log(err);
             }
         })
-    // .custom((val, { req }) =>
-    //     SubCategory.find({ category: req.body.category }).then(
-    //         (subcategories) => {
-    //             const subCategoriesIdsInDB = [];
-    //             subcategories.forEach((subCategory) => {
-    //                 subCategoriesIdsInDB.push(subCategory._id.toString());
-    //             });
-    //             // check if subcategories ids in db include subcategories in req.body (true)
-    //             const checker = (target, arr) => target.every((v) => arr.includes(v));
-    //             if (!checker(val, subCategoriesIdsInDB)) {
-    //                 return Promise.reject(
-    //                     new Error(`subcategories not belong to category`)
-    //                 );
-    //             }
-    //         }
-    //     )
-    // ),
 
-    , check('brand')
+        .custom(async (subCategoriesIds, { req }) => {
+            try {
+                const subCategories = await SubCategory.find({ category: req.body.category });
+                if (!subCategories) return Promise.reject(new Error("Categories Not Found"));
+                const subCategoriesIdsInDB = [];
+                subCategories.forEach((subCategory) => {
+                    subCategoriesIdsInDB.push(subCategory._id.toString())
+                });
+                const checker = subCategoriesIds.every((val) => subCategoriesIdsInDB.includes(val));
+                if (!checker) return Promise.reject(new Error("subcategories not belong to category"));
+                return true
+            } catch (err) {
+                console.log(err);
+            }
+        }),
+
+    check('brand')
         .optional()
         .isMongoId()
         .withMessage('Invalid ID formate'),
@@ -255,47 +255,51 @@ const updateProductValidator = [
         .withMessage('Product must be belong to a category')
         .isMongoId()
         .withMessage('Invalid ID formate')
-    // .custom((categoryId) =>
-    //     Category.findById(categoryId).then((category) => {
-    //         if (!category) {
-    //             return Promise.reject(
-    //                 new Error(`No category for this id: ${categoryId}`)
-    //             );
-    //         }
-    //     })
-    // ),
-    ,
-    check('subcategories')
+        .custom(async (categoryId) => {
+            try {
+                const category = await Category.findById(categoryId);
+                if (!category) return Promise.reject(new Error("The Category Not Found"));
+                return true
+            } catch (err) {
+                console.log(err);
+            }
+        }),
+
+    check('subCategories')
         .optional()
         .isMongoId()
         .withMessage('Invalid ID formate')
-    // .custom((subcategoriesIds) =>
-    //     SubCategory.find({ _id: { $exists: true, $in: subcategoriesIds } }).then(
-    //         (result) => {
-    //             if (result.length < 1 || result.length !== subcategoriesIds.length) {
-    //                 return Promise.reject(new Error(`Invalid subcategories Ids`));
-    //             }
-    //         }
-    //     )
-    // )
-    // .custom((val, { req }) =>
-    //     SubCategory.find({ category: req.body.category }).then(
-    //         (subcategories) => {
-    //             const subCategoriesIdsInDB = [];
-    //             subcategories.forEach((subCategory) => {
-    //                 subCategoriesIdsInDB.push(subCategory._id.toString());
-    //             });
-    //             // check if subcategories ids in db include subcategories in req.body (true)
-    //             const checker = (target, arr) => target.every((v) => arr.includes(v));
-    //             if (!checker(val, subCategoriesIdsInDB)) {
-    //                 return Promise.reject(
-    //                     new Error(`subcategories not belong to category`)
-    //                 );
-    //             }
-    //         }
-    //     )
-    // ),
-    ,
+        .custom(async (subcategoriesIds) => {
+            try {
+                const subCategory = await SubCategory.find({ _id: { $exists: true, $in: subcategoriesIds } });
+                if (!subCategory) return Promise.reject(new Error("The Sub-subCategoriesIds Not Found!!"));
+                if (subCategory.length < 1 || subCategory.length !== subcategoriesIds.length) {
+                    return Promise.reject(new Error(`Invalid subcategories Ids`));
+                }
+                return true;
+            } catch (err) {
+                console.log(err);
+            }
+        })
+
+        .custom(async (subCategoriesIds, { req }) => {
+            if (!req.body.category) {
+                const product = await Product.findById(req.params.id);
+                req.body.category = product.category
+                console.log(product);
+            }
+            const subCategories = await SubCategory.find({ category: req.body.category });
+            console.log(subCategories);
+            if (!subCategories) return Promise.reject(new Error("There is no sub-category belonging to this category"))
+            const subCategoriesIdsInDB = [];
+            subCategories.forEach((subCategory) => {
+                subCategoriesIdsInDB.push(subCategory._id.toString());
+            });
+            const checker = subCategoriesIds.every((val) => subCategoriesIdsInDB.includes(val));
+            if (!checker) return Promise.reject(new Error("subcategories not belong to category"));
+            return true;
+        }),
+
     check('brand')
         .optional()
         .isMongoId()

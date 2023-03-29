@@ -45,7 +45,9 @@ const getProducts = asyncHandler(async (req, res, next) => {
 });
 
 const getProduct = asyncHandler(async (req, res, next) => {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id)
+        .populate("category", "name -_id")
+        .populate("subCategories", "name -_id");
     if (!product) return next(new APIError("Product Not Found", 404));
     res.status(200).json({
         success: true,
