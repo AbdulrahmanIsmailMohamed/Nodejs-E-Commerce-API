@@ -8,6 +8,7 @@
     "consistent-return": "off",
     "func-names": "off",
     "object-shorthand": "off",
+    "node/no-unsupported-features/es-syntax": "off",
     "no-process-exit": "off",
     "no-param-reassign": "off",
     "no-return-await": "off",
