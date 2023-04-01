@@ -1,6 +1,7 @@
 const asyncHandler = require('../middlewares/asyncHandler');
 const Product = require("../models/Product");
 const APIError = require("../util/APIError");
+const APIFeature = require("../util/APIFeatures");
 
 const createProduct = asyncHandler(async (req, res, next) => {
     const product = await Product.create(req.body);
@@ -31,48 +32,20 @@ const deleteProduct = asyncHandler(async (req, res, next) => {
 })
 
 const getProducts = asyncHandler(async (req, res, next) => {
-    // filtration
-    const queryObj = { ...req.query };
-    const deleteQuery = ["limit", "page", "sort", "select"];
-    deleteQuery.forEach((field) => delete queryObj[field]);
+    const mongooseQuery = Product.find().populate("category", "name");
+    const apiFeature = new APIFeature(mongooseQuery, req.query)
+        .filter()
+        .pagination()
+        .search()
+        .limiting()
+        .sort()
 
-    // Apply Filtration Using [gte | gt | lte | lt]
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-
-    // pagination
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 5;
-    const skip = limit * (page - 1);
-
-    // Sorting
-    let sortBy;
-    if (req.query.sort) {
-        sortBy = req.query.sort.split(",").join(" ")
-    } else {
-        sortBy = "-createAt"
-    }
-
-    // Limiting
-    let selecteBy;
-    if (req.query.select) {
-        selecteBy = req.query.select.split(",").join(" ");
-    } else {
-        selecteBy = "-__v";
-    }
-
-    const products = await Product.find(JSON.parse(queryStr))
-        .skip(skip)
-        .limit(limit)
-        .populate("category", "name -_id")
-        .sort(sortBy)
-        .select(selecteBy)
-
-    if (!products) return next(new APIError("Products Not Found", 404));
+    const products = await apiFeature.mongooseQuery;
+    if (!products) return next(new APIError("The Products Not Found"))
     res.status(200).json({
         success: true,
         result: products.length,
-        products: products,
+        products,
     });
 });
 
