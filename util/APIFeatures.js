@@ -8,7 +8,7 @@ class APIFeature {
         }
         this.mongooseQuery = mongooseQuery;
         this.queryString = queryString;
-      
+
     }
 
     filter() {
@@ -24,11 +24,22 @@ class APIFeature {
         return this
     }
 
-    pagination() {
+    pagination(countDocument) {
         const limit = this.queryString.limit * 1 || 5;
         const page = this.queryString.page * 1 || 1;
         const skip = (page - 1) * limit;
+
+        // Pagination Result
+        const endIndex = limit * page;
+        let paginate = {};
+        paginate.currentPage = page;
+        paginate.numberOfPages = countDocument / limit;
+        paginate.limit = limit;
+        if (endIndex < countDocument) paginate.nextPage = page + 1
+        if (skip > 0) paginate.prev = page - 1;
+
         this.mongooseQuery.skip(skip).limit(limit);
+        this.paginationResult = paginate;
         return this
     }
 

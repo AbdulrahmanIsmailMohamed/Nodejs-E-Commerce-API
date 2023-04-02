@@ -32,19 +32,22 @@ const deleteProduct = asyncHandler(async (req, res, next) => {
 })
 
 const getProducts = asyncHandler(async (req, res, next) => {
-    const mongooseQuery = Product.find().populate("category", "name");
-    const apiFeature = new APIFeature(mongooseQuery, req.query)
+    const mongooseQuerys = Product.find().populate("category", "name");
+    const countDocument = await Product.countDocuments()
+    const apiFeature = new APIFeature(mongooseQuerys, req.query)
         .filter()
-        .pagination()
+        .pagination(countDocument)
         .search()
         .limiting()
         .sort()
 
-    const products = await apiFeature.mongooseQuery;
+    const { mongooseQuery, paginationResult } = apiFeature
+    const products = await mongooseQuery;
     if (!products) return next(new APIError("The Products Not Found"))
     res.status(200).json({
         success: true,
         result: products.length,
+        paginationResult: paginationResult,
         products,
     });
 });
