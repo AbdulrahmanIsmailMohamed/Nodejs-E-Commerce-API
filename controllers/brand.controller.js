@@ -2,7 +2,8 @@
 const slugify = require("slugify");
 const Brand = require("../models/Brand")
 const asyncHandler = require("../middlewares/asyncHandler");
-const APIError = require("../util/APIError")
+const APIError = require("../util/APIError");
+const APIFeature = require("../util/APIFeatures");
 
 /**
     @access private
@@ -56,16 +57,22 @@ const getBrand = asyncHandler(async (req, res, next) => {
     @access public
 */
 const getBrands = asyncHandler(async (req, res, next) => {
-    let page = req.query.page * 1 || 1;
-    let limit = req.query.limit * 1 || 5;
-    let skip = (page - 1) * limit
+    const countDocument = await Brand.countDocuments()
+    const apiFeature = new APIFeature(Brand.find(), req.query)
+        .filter()
+        .pagination(countDocument)
+        .search()
+        .limiting()
+        .sort()
 
-    const brands = await Brand.find().skip(skip).limit(limit);
-    if (!brands) return next(new APIError("The Brand Can't Be Found!!", 404));
+    const { mongooseQuery, paginationResult } = apiFeature
+    const brands = await mongooseQuery;
+    if (!brands) return next(new APIError("The Brands Not Found"))
     res.status(200).json({
         success: true,
         result: brands.length,
-        Brands: brands
+        paginationResult: paginationResult,
+        Brands: brands,
     });
 });
 

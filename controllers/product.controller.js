@@ -37,7 +37,7 @@ const getProducts = asyncHandler(async (req, res, next) => {
     const apiFeature = new APIFeature(mongooseQuerys, req.query)
         .filter()
         .pagination(countDocument)
-        .search()
+        .search("Products")
         .limiting()
         .sort()
 
@@ -48,7 +48,7 @@ const getProducts = asyncHandler(async (req, res, next) => {
         success: true,
         result: products.length,
         paginationResult: paginationResult,
-        products,
+        Products: products,
     });
 });
 

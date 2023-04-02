@@ -4,6 +4,7 @@ const slugify = require('slugify');
 const asyncHandler = require("../middlewares/asyncHandler");
 const SubCategory = require("../models/Sub-Category");
 const APIError = require("../util/APIError");
+const APIFeature = require('../util/APIFeatures');
 
 // middleware to set categoryid in req.body
 const setCategoryId = (req, res, next) => {
@@ -61,18 +62,22 @@ const getSubCategory = asyncHandler(async (req, res, next) => {
     @access private
 */
 const getSubCategories = asyncHandler(async (req, res, next) => {
-    const limit = req.query.limit || 5;
-    const page = req.query.page * 1 || 1;
-    const skip = (page - 1) * limit;
-    // nested category
-    let filter = {}
-    if (req.params.categoryId) filter = { category: req.params.categoryId }
-    const subCategories = await SubCategory.find(filter).skip(skip).limit(limit)
-        .populate("category", "name -_id");
-    if (!subCategories) return next(new APIError("The SubCategories is Not Found", 400));
+    const countDocument = await SubCategory.countDocuments()
+    const apiFeature = new APIFeature(SubCategory.find(), req.query)
+        .filter()
+        .pagination(countDocument)
+        .search()
+        .limiting()
+        .sort()
+
+    const { mongooseQuery, paginationResult } = apiFeature;
+    const subCategories = await mongooseQuery;
+    if (!subCategories) return next(new APIError("The SubCategories Not Found"))
     res.status(200).json({
+        success: true,
         result: subCategories.length,
-        subCategories: subCategories
+        paginationResult: paginationResult,
+        SubCategories: subCategories,
     });
 })
 

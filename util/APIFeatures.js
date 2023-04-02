@@ -33,7 +33,7 @@ class APIFeature {
         const endIndex = limit * page;
         let paginate = {};
         paginate.currentPage = page;
-        paginate.numberOfPages = countDocument / limit;
+        paginate.numberOfPages = Math.ceil(countDocument / limit);
         paginate.limit = limit;
         if (endIndex < countDocument) paginate.nextPage = page + 1
         if (skip > 0) paginate.prev = page - 1;
@@ -43,13 +43,18 @@ class APIFeature {
         return this
     }
 
-    search() {
+    search(modelName) {
         if (this.queryString.keyword) {
             let filter = {}
-            filter.$or = [
-                { title: { $regex: this.queryString.keyword, $options: "i" } },
-                { description: { $regex: this.queryString.keyword, $options: "i" } },
-            ]
+            if (modelName === "Products") {
+                filter.$or = [
+                    { title: { $regex: this.queryString.keyword, $options: "i" } },
+                    { description: { $regex: this.queryString.keyword, $options: "i" } },
+                ]
+            } else {
+                filter = { name: { $regex: this.queryString.keyword, $options: "i" } }
+                
+            }
             this.mongooseQuery = this.mongooseQuery.find(filter);
         }
         return this

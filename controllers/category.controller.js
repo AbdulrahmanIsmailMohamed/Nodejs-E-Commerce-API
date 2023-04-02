@@ -3,6 +3,7 @@ const slugify = require("slugify");
 const Category = require("../models/Categories");
 const asyncHandler = require("../middlewares/asyncHandler");
 const APIError = require("../util/APIError");
+const APIFeature = require("../util/APIFeatures");
 
 /**
     @access private
@@ -18,14 +19,32 @@ const createCategory = asyncHandler(async (req, res) => {
     @access public 
 */
 const getAllcategories = asyncHandler(async (req, res) => {
-    // pagination
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 5;
-    const skip = (page - 1) * limit;
+    // // pagination
+    // const page = req.query.page * 1 || 1;
+    // const limit = req.query.limit * 1 || 5;
+    // const skip = (page - 1) * limit;
 
-    const categories = await Category.find().skip(skip).limit(limit);
-    if (!categories) return next(new APIError("The Categories Not Found!", 404));
-    res.status(200).json({ result: categories.length, page: page, categories: categories })
+    // const categories = await Category.find().skip(skip).limit(limit);
+    // if (!categories) return next(new APIError("The Categories Not Found!", 404));
+    // res.status(200).json({ result: categories.length, page: page, categories: categories })
+
+    const countDocument = await Category.countDocuments()
+    const apiFeature = new APIFeature(Category.find(), req.query)
+        .filter()
+        .pagination(countDocument)
+        .search()
+        .limiting()
+        .sort()
+
+    const { mongooseQuery, paginationResult } = apiFeature
+    const categories = await mongooseQuery;
+    if (!categories) return next(new APIError("The Categories Not Found"))
+    res.status(200).json({
+        success: true,
+        result: categories.length,
+        paginationResult: paginationResult,
+        Categories: categories,
+    });
 })
 
 /**
