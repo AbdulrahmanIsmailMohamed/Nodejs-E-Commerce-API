@@ -13,6 +13,9 @@ const categorySchema = mongoose.Schema(
         slug: {
             type: String,
             lowercase: true
+        },
+        image: {
+            type:String,
         }
     },
     { timestamps: true }

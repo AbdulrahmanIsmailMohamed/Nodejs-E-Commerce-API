@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const subCategoryRoutes = require("./subCategory.routes");
+
 const {
     createCategory,
     getAllcategories,
@@ -14,6 +15,8 @@ const {
     updateCategoryValidator
 } = require("../util/validator/categoryValidator");
 
+const multerMW = require("../middlewares/multer");
+
 /**
 * * Nested Route
 * @UrlSource http://localhost:3333/api/v1/categories/:categoryId/sub-categories
@@ -22,7 +25,7 @@ router.use("/:categoryId/sub-categories", subCategoryRoutes);
 
 router
     .route('/')
-    .post(createCategoryValidator, createCategory)
+    .post(multerMW, createCategoryValidator, createCategory)
     .get(getAllcategories);
 
 router
