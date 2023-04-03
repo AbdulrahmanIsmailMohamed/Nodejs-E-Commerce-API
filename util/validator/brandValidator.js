@@ -15,7 +15,11 @@ const createBrandValidator = [
         .isLength({ min: "3" })
         .withMessage("The Name Is Short Brand Name")
         .isLength({ max: "32" })
-        .withMessage("The Name Is Long Brand Name"),
+        .withMessage("The Name Is Long Brand Name")
+        .custom((name, { req }) => {
+            req.body.slug = name;
+            return true;
+        }),
     validatorMW
 ]
 
@@ -31,7 +35,11 @@ const updateBrandValidator = [
         .isLength({ min: "3" })
         .withMessage("The Name Is Short Brand Name")
         .isLength({ max: "32" })
-        .withMessage("The Name Is Long Brand Name"),
+        .withMessage("The Name Is Long Brand Name")
+        .custom((name, { req }) => {
+            req.body.slug = name
+            return true
+        }),
 
     validatorMW
 ]
