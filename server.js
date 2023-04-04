@@ -1,3 +1,5 @@
+const path = require('path')
+
 const express = require("express");
 const morgan = require("morgan");
 require("dotenv").config();
@@ -12,17 +14,19 @@ const brandRoute = require('./routes/brand.routes');
 const productRoute = require('./routes/product.routes');
 
 const app = express();
+const api = process.env.API;
 
 // middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(`${api}`, express.static(path.join(__dirname, 'uploads')));
+
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
     console.log(`mode: ${process.env.NODE_ENV}`);
 }
 
 // routes
-const api = process.env.API;
 app.use(`${api}/categories`, categoryRoute);
 app.use(`${api}/sub-categories`, subcategoryRoute);
 app.use(`${api}/brands`, brandRoute);

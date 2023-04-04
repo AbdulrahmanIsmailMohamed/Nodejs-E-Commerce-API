@@ -15,7 +15,7 @@ const {
     updateCategoryValidator
 } = require("../util/validator/categoryValidator");
 
-const multerMW = require("../middlewares/multer");
+const { multerMW, imageProcess } = require("../middlewares/multer");
 
 /**
 * * Nested Route
@@ -25,12 +25,12 @@ router.use("/:categoryId/sub-categories", subCategoryRoutes);
 
 router
     .route('/')
-    .post(multerMW, createCategoryValidator, createCategory)
+    .post(multerMW, imageProcess, createCategoryValidator, createCategory)
     .get(getAllcategories);
 
 router
     .route("/:id")
-    .patch(updateCategoryValidator, updateCategory)
+    .patch(multerMW, updateCategoryValidator, updateCategory)
     .get(categoryIdValidator, getCategory)
     .delete(deleteCategory, deleteCategory);
 
