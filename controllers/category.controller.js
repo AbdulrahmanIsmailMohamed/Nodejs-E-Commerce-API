@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 const Category = require("../models/Categories");
+const { multerMW } = require("../middlewares/multer");
+const imageProcessing = require("../middlewares/imageProcessingMW")
 
 const {
     createOne,
@@ -9,6 +11,11 @@ const {
     getOne
 } = require("./handlerFactory");
 
+// multer
+const uploadSingleImage = multerMW();
+
+// image processing
+const imageProcess= imageProcessing("category","categories");
 
 /**
     @access private
@@ -41,5 +48,7 @@ module.exports = {
     getAllcategories,
     updateCategory,
     getCategory,
-    deleteCategory
+    deleteCategory,
+    uploadSingleImage,
+    imageProcess
 }

@@ -6,7 +6,9 @@ const {
     getAllcategories,
     updateCategory,
     getCategory,
-    deleteCategory
+    deleteCategory,
+    uploadSingleImage,
+    imageProcess
 } = require("../controllers/category.controller");
 
 const {
@@ -14,8 +16,6 @@ const {
     createCategoryValidator,
     updateCategoryValidator
 } = require("../util/validator/categoryValidator");
-
-const { multerMW, imageProcess } = require("../middlewares/multer");
 
 /**
 * * Nested Route
@@ -25,12 +25,22 @@ router.use("/:categoryId/sub-categories", subCategoryRoutes);
 
 router
     .route('/')
-    .post(multerMW, imageProcess, createCategoryValidator, createCategory)
+    .post(
+        uploadSingleImage,
+        imageProcess,
+        createCategoryValidator,
+        createCategory
+    )
     .get(getAllcategories);
 
 router
     .route("/:id")
-    .patch(multerMW, updateCategoryValidator, updateCategory)
+    .patch(
+        uploadSingleImage,
+        imageProcess,
+        updateCategoryValidator,
+        updateCategory
+    )
     .get(categoryIdValidator, getCategory)
     .delete(deleteCategory, deleteCategory);
 

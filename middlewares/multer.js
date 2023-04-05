@@ -1,7 +1,5 @@
 const multer = require('multer');
 const APIError = require("../util/APIError");
-const imageProcessing = require('./imageProcessingMW');
-
 
 /**
 * * Disk Storage
@@ -23,14 +21,11 @@ const multerFilter = (req, file, cb) => {
     else cb(new APIError("Add Only image", 400), null);
 }
 
-// image processing
-const imageProcess= imageProcessing("category","categories");
-
 const upload = multer({ fileFilter: multerFilter, storage: multerStorage });
 
-const multerMW = upload.single("image");
+const multerMW = (fieldName = "image") =>
+    upload.single(fieldName);
 
 module.exports = {
     multerMW,
-    imageProcess
 };
