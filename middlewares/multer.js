@@ -23,9 +23,19 @@ const multerFilter = (req, file, cb) => {
 
 const upload = multer({ fileFilter: multerFilter, storage: multerStorage });
 
-const multerMW = (fieldName = "image") =>
+
+const uploadSingleImage = (fieldName = "image") =>
     upload.single(fieldName);
 
+
+const uploadFields = (singleImageName, multiImageName, maxSingle = 1, maxMulti = 5) =>
+    upload.fields([
+        { name: `${singleImageName}`, maxCount: maxSingle },
+        { name: `${multiImageName}`, maxCount: maxMulti }
+    ]);
+
+    
 module.exports = {
-    multerMW,
+    uploadSingleImage,
+    uploadFields
 };

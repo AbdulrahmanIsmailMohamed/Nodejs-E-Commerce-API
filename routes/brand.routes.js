@@ -6,7 +6,7 @@ const {
     updateBrand,
     deleteBrand,
     getBrand,
-    uploadSingleImage,
+    uploadImage,
     imageProcess
 } = require("../controllers/brand.controller");
 
@@ -19,7 +19,7 @@ const {
 router
     .route("/")
     .post(
-        uploadSingleImage,
+        uploadImage,
         imageProcess,
         createBrandValidator,
         createBrand
@@ -29,7 +29,7 @@ router
 router
     .route("/:id")
     .patch(
-        uploadSingleImage,
+        uploadImage,
         imageProcess,
         updateBrandValidator,
         updateBrand

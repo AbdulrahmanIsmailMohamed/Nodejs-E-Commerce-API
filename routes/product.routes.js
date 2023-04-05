@@ -5,7 +5,9 @@ const {
     createProduct,
     updateProduct,
     getProduct,
-    deleteProduct
+    deleteProduct,
+    uploadMultiImages,
+    imageProcessing
 } = require("../controllers/product.controller");
 
 const {
@@ -17,11 +19,21 @@ const {
 router
     .route("/")
     .get(getProducts)
-    .post(createProductValidator, createProduct)
+    .post(
+        uploadMultiImages,
+        imageProcessing,
+        createProductValidator,
+        createProduct
+    )
 
 router
     .route("/:id")
-    .patch(updateProductValidator, updateProduct)
+    .patch(
+        uploadMultiImages,
+        imageProcessing,
+        updateProductValidator,
+        updateProduct
+    )
     .delete(productIdValidator, deleteProduct)
     .get(productIdValidator, getProduct)
 

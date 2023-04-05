@@ -7,7 +7,7 @@ const {
     updateCategory,
     getCategory,
     deleteCategory,
-    uploadSingleImage,
+    uploadImage,
     imageProcess
 } = require("../controllers/category.controller");
 
@@ -26,7 +26,7 @@ router.use("/:categoryId/sub-categories", subCategoryRoutes);
 router
     .route('/')
     .post(
-        uploadSingleImage,
+        uploadImage,
         imageProcess,
         createCategoryValidator,
         createCategory
@@ -36,7 +36,7 @@ router
 router
     .route("/:id")
     .patch(
-        uploadSingleImage,
+        uploadImage,
         imageProcess,
         updateCategoryValidator,
         updateCategory

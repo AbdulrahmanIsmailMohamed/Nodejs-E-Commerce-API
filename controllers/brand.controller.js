@@ -1,5 +1,5 @@
 const Brand = require("../models/Brand")
-const { multerMW } = require("../middlewares/multer");
+const { uploadSingleImage } = require("../middlewares/multer");
 const imageProcessing = require("../middlewares/imageProcessingMW")
 
 const {
@@ -11,7 +11,7 @@ const {
 } = require("./handlerFactory");
 
 // multer
-const uploadSingleImage = multerMW();
+const uploadImage = uploadSingleImage();
 
 // image processing
 const imageProcess= imageProcessing("brand","brands");
@@ -48,6 +48,6 @@ module.exports = {
     getBrand,
     getBrands,
     deleteBrand,
-    uploadSingleImage,
+    uploadImage,
     imageProcess
 }
