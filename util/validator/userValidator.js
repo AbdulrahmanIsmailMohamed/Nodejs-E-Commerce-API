@@ -3,7 +3,6 @@ const { check } = require("express-validator");
 
 const validatorMW = require("../../middlewares/validatorMW");
 const User = require("../../models/user");
-const APIErro = require("../APIError");
 const APIError = require("../APIError");
 
 function isEmail(val) {
@@ -31,6 +30,7 @@ const createUserValidator = [
         .isLength({ max: 100 })
         .withMessage("The Name Is Long User Name")
         .custom((name, { req }) => {
+            console.log(name, req.body);
             req.body.slug = slugify(name);
             return true;
         }),
@@ -42,13 +42,13 @@ const createUserValidator = [
             if (isEmail(val)) {
                 try {
                     const user = await User.findOne({ email: val });
-                    if (user) return Promise.reject(new APIErro("Email is Excist Please Login", 400));
+                    if (user) return Promise.reject(new APIError("Email is Excist Please Login", 400));
                     return true
                 } catch (err) {
                     console.log(err);
                 }
             }
-            return Promise.reject(new APIErro("Email is Excist Please Login", 400))
+            return Promise.reject(new APIError("Email is Excist Please Login", 400))
         }),
 
     check("password")
@@ -86,6 +86,7 @@ const updateUserValidator = [
         .isLength({ max: 100 })
         .withMessage("The Name Is Long User Name")
         .custom((name, { req }) => {
+            console.log(name, req.body);
             req.body.slug = slugify(name);
             return true;
         }),
@@ -99,13 +100,13 @@ const updateUserValidator = [
                 try {
                     const user = await User.findOne({ email: val });
                     console.log(user)
-                    if (user) return Promise.reject(new APIErro("Email is Excist Please Login", 400));
+                    if (user) return Promise.reject(new APIError("Email is Excist Please Login", 400));
                     return true
                 } catch (err) {
                     console.log(err);
                 }
             }
-            return Promise.reject(new APIErro("Email is Excist Please Login", 400))
+            return Promise.reject(new APIError("Email is Excist Please Login", 400))
         }),
 
     check("password")

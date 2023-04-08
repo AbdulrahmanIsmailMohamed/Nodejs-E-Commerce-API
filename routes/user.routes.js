@@ -19,9 +19,9 @@ router
     .route("/")
     .get(getUsers)
     .post(
-        createUserValidator,
         uploadUserImage,
         resizeImage,
+        createUserValidator,
         createUser
     );
 
@@ -30,9 +30,9 @@ router
     .get(userIdValidator, getUser)
     .delete(userIdValidator, deleteUser)
     .patch(
-        updateUserValidator,
         uploadUserImage,
         resizeImage,
+        updateUserValidator,
         updateUser
     );
 
