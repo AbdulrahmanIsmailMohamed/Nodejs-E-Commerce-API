@@ -6,6 +6,7 @@ const APIError = require("../util/APIError");
 const imageProcessing = (
     imageNameFolder,
     nameFolder,
+    fieldName = "image",
     format = "jpeg",
     quality = 90,
     hight = 600,
@@ -24,7 +25,8 @@ const imageProcessing = (
             //* url: http://localhost:3333/api/v1/categories/category--036615f5-c390-48fb-99ce-2d03330bb47f--1680570794277.jpeg
             const api = process.env.API
             const basePath = `${req.protocol}://${req.get('host')}${api}/${nameFolder}/${uniqueSuffix}`;
-            req.body.image = basePath;
+            if (fieldName === "image") req.body.image = basePath;
+            else req.body.imgProfile = basePath;
             next();
         } else {
             next(new APIError("Not Found Image", 400));

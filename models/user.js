@@ -33,6 +33,10 @@ const userSchema = mongoose.Schema(
                     one uppercase letter, one numeric digit, and one special character`
             }
         },
+        active: {
+            type: Boolean,
+            default: true
+        },
         phone: String,
         imgProfile: String,
         role: {
