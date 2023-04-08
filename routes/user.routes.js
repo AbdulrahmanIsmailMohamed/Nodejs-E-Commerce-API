@@ -9,10 +9,17 @@ const {
     getUser
 } = require("../controllers/user.controller");
 
+const {
+    createUserValidator,
+    updateUserValidator,
+    userIdValidator
+} = require("../util/validator/userValidator")
+
 router
     .route("/")
     .get(getUsers)
     .post(
+        createUserValidator,
         uploadUserImage,
         resizeImage,
         createUser
@@ -20,9 +27,10 @@ router
 
 router
     .route("/:id")
-    .get(getUser)
-    .delete(deleteUser)
+    .get(userIdValidator, getUser)
+    .delete(userIdValidator, deleteUser)
     .patch(
+        updateUserValidator,
         uploadUserImage,
         resizeImage,
         updateUser
