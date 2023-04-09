@@ -1,7 +1,7 @@
 const sharp = require("sharp");
 const { v4: uuidv4 } = require('uuid')
 const asyncHandler = require("./asyncHandler");
-const APIError = require("../util/APIError");
+// const APIError = require("../util/APIError");
 
 const imageProcessing = (
     imageNameFolder,
@@ -28,9 +28,11 @@ const imageProcessing = (
             if (fieldName === "image") req.body.image = basePath;
             else req.body.imgProfile = basePath;
             next();
-        } else {
-            next(new APIError("Not Found Image", 400));
         }
+        //  else {
+        //     next(new APIError("Not Found Image", 400));
+        // }
+        next()
     });
 
 module.exports = imageProcessing;

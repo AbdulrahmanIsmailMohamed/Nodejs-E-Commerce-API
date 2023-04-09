@@ -51,14 +51,22 @@ const createUserValidator = [
             return Promise.reject(new APIError("Email is Excist Please Login", 400))
         }),
 
+    check("confirmPassword")
+        .notEmpty()
+        .withMessage("The Confirm Password is required"),
+
     check("password")
         .notEmpty()
         .withMessage("The password is required")
         .isLength({ min: 8 })
         .withMessage("The password must be at least 8 chars")
         .custom((val) => {
-            if (isStrongPass(val)) return true
-            return Promise.reject(new APIError("The Password must be contain at least one lowercase letterone uppercase letter, one numeric digit, and one special character"))
+            if (isStrongPass(val)) return true;
+            return Promise.reject(new APIError("The Password must be contain at least one lowercase letterone uppercase letter, one numeric digit, and one special character"));
+        })
+        .custom((password, { req }) => {
+            if (password !== req.body.confirmPassword) return Promise.reject(new APIError("The Password And Confirm Password Not Valid"));
+            return true;
         }),
 
     check("phone")
@@ -109,17 +117,6 @@ const updateUserValidator = [
             return Promise.reject(new APIError("Email is Excist Please Login", 400))
         }),
 
-    check("password")
-        .optional()
-        .notEmpty()
-        .withMessage("The password is required")
-        .isLength({ min: 8 })
-        .withMessage("The password must be at least 8 chars")
-        .custom((val) => {
-            if (isStrongPass(val)) return true
-            return Promise.reject(new APIError("The Password must be contain at least one lowercase letterone uppercase letter, one numeric digit, and one special character"))
-        }),
-
     check("phone")
         .optional()
         .notEmpty()
@@ -131,10 +128,33 @@ const updateUserValidator = [
         .optional(),
 
     validatorMW
+];
+
+const changePasswordValidator = [
+    check("id")
+        .isMongoId()
+        .withMessage("Invalid User Id Format!"),
+
+    check("password")
+        .notEmpty()
+        .withMessage("The password is required")
+        .isLength({ min: 8 })
+        .withMessage("The password must be at least 8 chars")
+        .custom((val) => {
+            if (isStrongPass(val)) return true;
+            return Promise.reject(new APIError("The Password must be contain at least one lowercase letterone uppercase letter, one numeric digit, and one special character"));
+        })
+        // .custom((password, { req }) => {
+        //     if (password !== req.body.confirmPassword) return Promise.reject(new APIError("The Password And Confirm Password Not Valid"));
+        //     return true;
+        // }),
+
+    ,validatorMW
 ]
 
 module.exports = {
     userIdValidator,
     updateUserValidator,
-    createUserValidator
+    createUserValidator,
+    changePasswordValidator
 }

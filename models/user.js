@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const APIError = require("../util/APIError");
 
 const userSchema = mongoose.Schema(
     {
@@ -47,6 +49,17 @@ const userSchema = mongoose.Schema(
     },
     { timestamp: true }
 );
+
+userSchema.pre("save",function (next)  {
+    if(!this.isModified("password")) return next(new APIError("please enter your password!",400));
+    this.password = bcrypt.hashSync(this.password,12);
+    next();
+});
+
+userSchema.pre(/^find/, function (next) {
+    this.select("-password -_id -__v")
+    next();
+})
 
 const User = mongoose.model("User", userSchema);
 

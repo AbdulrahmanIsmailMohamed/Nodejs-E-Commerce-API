@@ -6,14 +6,18 @@ const {
     getUsers,
     uploadUserImage,
     resizeImage,
-    getUser
+    getUser,
+    changePassword
 } = require("../controllers/user.controller");
 
 const {
     createUserValidator,
     updateUserValidator,
-    userIdValidator
+    userIdValidator,
+    changePasswordValidator
 } = require("../util/validator/userValidator")
+
+router.patch("/change-password/:id", changePasswordValidator, changePassword);
 
 router
     .route("/")
