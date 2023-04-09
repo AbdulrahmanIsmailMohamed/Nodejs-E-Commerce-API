@@ -1,5 +1,6 @@
 const slugify = require("slugify");
 const { check } = require("express-validator");
+const bcrypt = require("bcrypt")
 
 const validatorMW = require("../../middlewares/validatorMW");
 const User = require("../../models/user");
@@ -135,21 +136,39 @@ const changePasswordValidator = [
         .isMongoId()
         .withMessage("Invalid User Id Format!"),
 
+    check("currentPassword")
+        .notEmpty()
+        .withMessage("The Current Password Is Required!")
+        .custom((val) => {
+            if (isStrongPass(val)) return true;
+            return Promise.reject(new APIError("The Password must be contain at least one lowercase letterone uppercase letter, one numeric digit, and one special character"));
+        })
+        .custom(async (val, { req }) => {
+            const user = await User.findById(req.params.id);
+            if (!user) return Promise.reject(new APIError("The User Not Found!", 400));
+            if (!bcrypt.compareSync(val, user.password)) return Promise.reject(new APIError("The Current User Password not valid!!", 400));
+            return true;
+        }),
+
+    check("confirmPassword")
+        .notEmpty()
+        .withMessage("The Confirm Password Is not Must Be Null!!"),
+
     check("password")
         .notEmpty()
-        .withMessage("The password is required")
+        .withMessage("The New Password is required")
         .isLength({ min: 8 })
         .withMessage("The password must be at least 8 chars")
         .custom((val) => {
             if (isStrongPass(val)) return true;
             return Promise.reject(new APIError("The Password must be contain at least one lowercase letterone uppercase letter, one numeric digit, and one special character"));
         })
-        // .custom((password, { req }) => {
-        //     if (password !== req.body.confirmPassword) return Promise.reject(new APIError("The Password And Confirm Password Not Valid"));
-        //     return true;
-        // }),
+        .custom((password, { req }) => {
+            if (password !== req.body.confirmPassword) return Promise.reject(new APIError("The Password And Confirm Password Not Valid"));
+            return true;
+        }),
 
-    ,validatorMW
+    validatorMW
 ]
 
 module.exports = {

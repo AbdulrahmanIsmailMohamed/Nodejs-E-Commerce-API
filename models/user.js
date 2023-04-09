@@ -57,9 +57,9 @@ userSchema.pre("save",function (next)  {
 });
 
 userSchema.pre(/^find/, function (next) {
-    this.select("-password -_id -__v")
+    this.select("-__v")
     next();
-})
+});
 
 const User = mongoose.model("User", userSchema);
 
