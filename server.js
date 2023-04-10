@@ -14,6 +14,7 @@ const subcategoryRoute = require('./routes/subCategory.routes');
 const brandRoute = require('./routes/brand.routes');
 const productRoute = require('./routes/product.routes');
 const userRoute = require('./routes/user.routes');
+const authRoute = require('./routes/auth.routes');
 
 const app = express();
 const api = process.env.API;
@@ -34,6 +35,7 @@ app.use(`${api}/sub-categories`, subcategoryRoute);
 app.use(`${api}/brands`, brandRoute);
 app.use(`${api}/products`, productRoute);
 app.use(`${api}/users`, userRoute);
+app.use(`${api}/auth`, authRoute);
 
 
 app.all('*', (req, res, nxt) => {
