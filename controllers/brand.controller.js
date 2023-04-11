@@ -1,6 +1,8 @@
+const { v4: uuidv4 } = require("uuid")
+const sharp = require("sharp");
+
 const Brand = require("../models/Brand")
 const { uploadSingleImage } = require("../middlewares/multer");
-const imageProcessing = require("../middlewares/imageProcessingMW")
 
 const {
     createOne,
@@ -9,12 +11,26 @@ const {
     updateOne,
     getOne
 } = require("./handlerFactory");
+const asyncHandler = require("../middlewares/asyncHandler");
 
 // multer
 const uploadImage = uploadSingleImage();
 
 // image processing
-const imageProcess= imageProcessing("brand","brands");
+const resizeImage = asyncHandler(async (req, res, next) => {
+    if (req.file) {
+        const filename = `brand--${uuidv4()}--${Date.now()}.jpeg`;
+        await sharp(req.file.buffer)
+            .resize(600, 600)
+            .toFormat('jpeg')
+            .jpeg({ quality: 95 })
+            .toFile(`uploads/brands/${filename}`);
+
+        // Save image into our db
+        req.body.image = filename;
+    }
+    next();
+});
 
 /**
     @access private
@@ -49,5 +65,5 @@ module.exports = {
     getBrands,
     deleteBrand,
     uploadImage,
-    imageProcess
+    resizeImage
 }

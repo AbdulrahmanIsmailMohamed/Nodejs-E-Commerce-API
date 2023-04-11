@@ -7,7 +7,7 @@ const {
     deleteBrand,
     getBrand,
     uploadImage,
-    imageProcess
+    resizeImage
 } = require("../controllers/brand.controller");
 
 const {
@@ -20,7 +20,7 @@ router
     .route("/")
     .post(
         uploadImage,
-        imageProcess,
+        resizeImage,
         createBrandValidator,
         createBrand
     )
@@ -30,7 +30,7 @@ router
     .route("/:id")
     .patch(
         uploadImage,
-        imageProcess,
+        resizeImage,
         updateBrandValidator,
         updateBrand
     )

@@ -10,7 +10,7 @@ const signup = asyncHandling(async (req, res, next) => {
     const { name, email, password, slug } = req.body;
     const user = await User.create({ name, slug, email, password });
     if (!user) return next(new APIErro("An error occurred during the registration process"));
-
+    
     const token = jwt.sign(
         {
             userId: user._id,

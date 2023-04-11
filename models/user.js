@@ -35,6 +35,7 @@ const userSchema = mongoose.Schema(
                     one uppercase letter, one numeric digit, and one special character`
             }
         },
+        changePasswordAt: Date,
         active: {
             type: Boolean,
             default: true
@@ -50,9 +51,9 @@ const userSchema = mongoose.Schema(
     { timestamp: true }
 );
 
-userSchema.pre("save",function (next)  {
-    if(!this.isModified("password")) return next(new APIError("please enter your password!",400));
-    this.password = bcrypt.hashSync(this.password,12);
+userSchema.pre("save", function (next) {
+    if (!this.isModified("password")) return next(new APIError("please enter your password!", 400));
+    this.password = bcrypt.hashSync(this.password, 12);
     next();
 });
 

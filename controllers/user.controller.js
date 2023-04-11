@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt")
+const { v4: uuidv4 } = require("uuid");
+const sharp = require("sharp");
 
 const User = require("../models/user");
-const imageProcessing = require("../middlewares/imageProcessingMW");
 const asyncHandler = require("../middlewares/asyncHandler");
 const APIError = require("../util/APIError");
 
@@ -18,8 +19,20 @@ const {
 const uploadUserImage = uploadSingleImage("imgProfile");
 
 // Image Processing
-const resizeImage = imageProcessing("user", "users", "imgProfile");
+const resizeImage = asyncHandler(async (req, res, next) => {
+    if (req.file) {
+        const filename = `user--${uuidv4()}--${Date.now()}.jpeg`;
+        await sharp(req.file.buffer)
+            .resize(600, 600)
+            .toFormat('jpeg')
+            .jpeg({ quality: 95 })
+            .toFile(`uploads/users/${filename}`);
 
+        // Save image into our db
+        req.body.imgProfile = filename;
+    }
+    next();
+});
 /**
     @access private
 */
@@ -42,7 +55,10 @@ const changePassword = asyncHandler(async (req, res, next) => {
     const password = bcrypt.hashSync(req.body.password, 12);
     const user = await User.findByIdAndUpdate(
         req.params.id,
-        { password },
+        {
+            password,
+            changePasswordAt: Date.now()
+        },
         { new: true }
     );
     if (!user) return next(new APIError("Your Password Can't Be Updated!!"));
