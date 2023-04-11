@@ -30,7 +30,9 @@ const resizeImage = asyncHandler(async (req, res, next) => {
             .toFile(`uploads/categories/${filename}`);
 
         // Save image into our db
-        req.body.image = filename;
+        const api = process.env.API
+        const basePath = `${req.protocol}://${req.get('host')}${api}/categories/${filename}`
+        req.body.image = basePath;
     }
     next();
 });

@@ -1,4 +1,5 @@
 const router = require("express").Router();
+
 const {
     createUser,
     deleteUser,
@@ -17,12 +18,23 @@ const {
     changePasswordValidator
 } = require("../util/validator/userValidator")
 
+const {
+    protectRoute,
+    allowTo
+} = require("../config/auth");
+
 router.patch("/change-password/:id", changePasswordValidator, changePassword);
 
 router
     .route("/")
-    .get(getUsers)
+    .get(
+        protectRoute,
+        allowTo("admin", "manager"),
+        getUsers
+    )
     .post(
+        protectRoute,
+        allowTo("admin", "manager"),
         uploadUserImage,
         resizeImage,
         createUserValidator,
@@ -31,9 +43,21 @@ router
 
 router
     .route("/:id")
-    .get(userIdValidator, getUser)
-    .delete(userIdValidator, deleteUser)
+    .get(
+        protectRoute,
+        allowTo("admin", "manager"),
+        userIdValidator,
+        getUser
+    )
+    .delete(
+        protectRoute,
+        allowTo("admin", "manager"),
+        userIdValidator,
+        deleteUser
+    )
     .patch(
+        protectRoute,
+        allowTo("admin", "manager"),
         uploadUserImage,
         resizeImage,
         updateUserValidator,

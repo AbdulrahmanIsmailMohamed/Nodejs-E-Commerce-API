@@ -1,5 +1,6 @@
 const router = require("express").Router();
 
+const { protectRoute } = require("../config/auth");
 const {
     createBrand,
     getBrands,
@@ -19,6 +20,7 @@ const {
 router
     .route("/")
     .post(
+        protectRoute,
         uploadImage,
         resizeImage,
         createBrandValidator,
@@ -29,12 +31,17 @@ router
 router
     .route("/:id")
     .patch(
+        protectRoute,
         uploadImage,
         resizeImage,
         updateBrandValidator,
         updateBrand
     )
-    .delete(deleteBrand)
+    .delete(
+        protectRoute,
+        brandIdValidator,
+        deleteBrand
+    )
     .get(brandIdValidator, getBrand);
 
 module.exports = router;

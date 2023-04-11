@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const subCategoryRoutes = require("./subCategory.routes");
-const protectRoute = require("../config/auth");
 
+const { protectRoute } = require("../config/auth");
 const {
     createCategory,
     getAllcategories,
@@ -38,12 +38,17 @@ router
 router
     .route("/:id")
     .patch(
+        protectRoute,
         uploadImage,
         resizeImage,
         updateCategoryValidator,
         updateCategory
     )
     .get(categoryIdValidator, getCategory)
-    .delete(deleteCategory, deleteCategory);
+    .delete(
+        protectRoute,
+        deleteCategory,
+        deleteCategory
+    );
 
 module.exports = router

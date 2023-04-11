@@ -21,6 +21,7 @@ const uploadUserImage = uploadSingleImage("imgProfile");
 // Image Processing
 const resizeImage = asyncHandler(async (req, res, next) => {
     if (req.file) {
+
         const filename = `user--${uuidv4()}--${Date.now()}.jpeg`;
         await sharp(req.file.buffer)
             .resize(600, 600)
@@ -29,7 +30,9 @@ const resizeImage = asyncHandler(async (req, res, next) => {
             .toFile(`uploads/users/${filename}`);
 
         // Save image into our db
-        req.body.imgProfile = filename;
+        const api = process.env.API
+        const basePath = `${req.protocol}://${req.get('host')}${api}/users/${filename}`
+        req.body.imgProfile = basePath;
     }
     next();
 });

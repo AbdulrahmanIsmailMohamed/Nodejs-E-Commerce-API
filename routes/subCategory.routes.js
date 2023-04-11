@@ -2,6 +2,7 @@
 // exam: we need to access categoryId From category routes
 const router = require('express').Router({ mergeParams: true });
 
+const { protectRoute } = require('../config/auth');
 const {
     createSubCategory,
     getSubCategories,
@@ -19,13 +20,26 @@ const {
 
 router
     .route("/")
-    .post(setCategoryId,createSubCategoryValidator, createSubCategory)
+    .post(
+        protectRoute,
+        setCategoryId,
+        createSubCategoryValidator,
+        createSubCategory
+    )
     .get(getSubCategories)
 
 router
     .route("/:id")
     .get(subCategoryIdValidator, getSubCategory)
-    .patch(updateSubCategoryValidator, updateSubCategory)
-    .delete(subCategoryIdValidator, deleteSubCategory);
+    .patch(
+        protectRoute,
+        updateSubCategoryValidator,
+        updateSubCategory
+    )
+    .delete(
+        protectRoute,
+        subCategoryIdValidator,
+        deleteSubCategory
+    );
 
 module.exports = router;

@@ -10,7 +10,10 @@ const protectRoute = asyncHandling(async (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
     }
-    if (!token) return next(new APIError("You're Not Registerd, Please Login!!", 401));
+    if (!token) {
+        res.redirect(`${process.env.API}/products`)
+        return next(new APIError("You're Not Registerd, Please Login!!", 401));
+    }
 
     // 2) Verify token (no change happens, expired token)
     const decode = jwt.verify(token, process.env.JWT_SEC);
@@ -29,6 +32,21 @@ const protectRoute = asyncHandling(async (req, res, next) => {
     }
     req.user = user;
     next();
-})
+});
 
-module.exports = protectRoute
+const allowTo = (...roles) =>
+   asyncHandling(async (req, res, next) => {
+    console.log(req.user.role);
+        if (!roles.includes(req.user.role)) {
+            // res.redirect(`${process.env.API}/products`);
+            return next(
+                new APIError('You are not allowed to access this route', 403)
+            );
+        }
+        next();
+    })
+
+module.exports = {
+    protectRoute,
+    allowTo
+}
