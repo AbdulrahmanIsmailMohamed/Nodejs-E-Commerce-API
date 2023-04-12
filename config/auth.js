@@ -11,7 +11,6 @@ const protectRoute = asyncHandling(async (req, res, next) => {
         token = req.headers.authorization.split(" ")[1];
     }
     if (!token) {
-        res.redirect(`${process.env.API}/products`)
         return next(new APIError("You're Not Registerd, Please Login!!", 401));
     }
 

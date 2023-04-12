@@ -1,6 +1,9 @@
 const router = require("express").Router();
 
-const { protectRoute } = require("../config/auth");
+const {
+    protectRoute,
+    allowTo
+} = require("../config/auth");
 const {
     createBrand,
     getBrands,
@@ -21,6 +24,7 @@ router
     .route("/")
     .post(
         protectRoute,
+        allowTo("admin", "manager"),
         uploadImage,
         resizeImage,
         createBrandValidator,
@@ -32,6 +36,7 @@ router
     .route("/:id")
     .patch(
         protectRoute,
+        allowTo("admin", "manager"),
         uploadImage,
         resizeImage,
         updateBrandValidator,
@@ -39,6 +44,7 @@ router
     )
     .delete(
         protectRoute,
+        allowTo("admin", "manager"),
         brandIdValidator,
         deleteBrand
     )

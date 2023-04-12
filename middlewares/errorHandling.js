@@ -1,20 +1,18 @@
 const APIError = require("../util/APIError");
 
-const errorForDev = (err, res) => {
+const errorForDev = (err, res) => 
     res.status(err.statusCode).json({
         status: err.statusCode,
         error: err,
         message: err.message,
         stack: err.stack
     });
-}
 
-const errorForProd = (err, res) => {
+const errorForProd = (err, res) => 
     res.status(err.statusCode).json({
         status: err.statusCode,
         message: err.message
-    })
-}
+    });
 
 const handleJwtInvalidSignature = () =>
     new APIError('Invalid token, please login again..', 401);
@@ -34,4 +32,4 @@ const errorHandling = (err, req, res, next) => {
     }
 }
 
-module.exports = errorHandling
+module.exports = errorHandling;
