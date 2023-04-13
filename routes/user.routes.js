@@ -23,7 +23,12 @@ const {
     allowTo
 } = require("../config/auth");
 
-router.patch("/change-password/:id", changePasswordValidator, changePassword);
+router.patch(
+    "/change-password/:id",
+    protectRoute,
+    changePasswordValidator,
+    changePassword
+);
 
 router
     .route("/")
@@ -33,8 +38,8 @@ router
         getUsers
     )
     .post(
-        protectRoute,
-        allowTo("admin", "manager"),
+        // protectRoute,
+        // allowTo("admin", "manager"),
         uploadUserImage,
         resizeImage,
         createUserValidator,

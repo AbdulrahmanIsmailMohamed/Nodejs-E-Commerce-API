@@ -36,6 +36,9 @@ const userSchema = mongoose.Schema(
             }
         },
         changePasswordAt: Date,
+        passwordResetCode: String,
+        passwordResetCodeExpire: Date,
+        passwordResetVerified: Boolean,
         active: {
             type: Boolean,
             default: true
@@ -52,8 +55,10 @@ const userSchema = mongoose.Schema(
 );
 
 userSchema.pre("save", function (next) {
-    if (!this.isModified("password")) return next(new APIError("please enter your password!", 400));
-    this.password = bcrypt.hashSync(this.password, 12);
+    // if (!this.isModified("password")) return next(new APIError("please enter your password!", 400));
+    if (this.isNew || this.isModified("password")) {
+        this.password = bcrypt.hashSync(this.password, 12);
+    }
     next();
 });
 

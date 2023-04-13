@@ -2,12 +2,15 @@ const router = require("express").Router();
 
 const {
     signup,
-    login
+    login,
+    forgotPassword
 } = require("../controllers/auth.controller");
 const {
     signupValidator,
     loginValidator
 } = require("../util/validator/authValidator");
+
+router.post("/forgotPassword", forgotPassword);
 
 router.post("/signup", signupValidator, signup);
 

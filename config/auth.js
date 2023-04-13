@@ -18,7 +18,7 @@ const protectRoute = asyncHandling(async (req, res, next) => {
     const decode = jwt.verify(token, process.env.JWT_SEC);
 
     // 3) Check if user exists
-    const userId = decode.userId;
+    const { userId } = decode;
     const user = await User.findById(userId);
     if (!user) return next(new APIError("The User That Belongs To This Token, Does No Longer Exist", 401));
 
@@ -34,8 +34,8 @@ const protectRoute = asyncHandling(async (req, res, next) => {
 });
 
 const allowTo = (...roles) =>
-   asyncHandling(async (req, res, next) => {
-    console.log(req.user.role);
+    asyncHandling(async (req, res, next) => {
+        console.log(req.user.role);
         if (!roles.includes(req.user.role)) {
             // res.redirect(`${process.env.API}/products`);
             return next(
