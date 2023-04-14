@@ -38,8 +38,8 @@ router
         getUsers
     )
     .post(
-        // protectRoute,
-        // allowTo("admin", "manager"),
+        protectRoute,
+        allowTo("admin", "manager"),
         uploadUserImage,
         resizeImage,
         createUserValidator,

@@ -7,6 +7,7 @@ const asyncHandling = require("../middlewares/asyncHandler")
 const APIErro = require("../util/APIError");
 const User = require('../models/user');
 const APIError = require('../util/APIError');
+const sendMail = require("../util/sendMail");
 
 const signup = asyncHandling(async (req, res, next) => {
     const { name, email, password, slug } = req.body;
@@ -50,20 +51,33 @@ const forgotPassword = asyncHandling(async (req, res, next) => {
 
     // 2) If user exist, Generate hash reset random 6 digits and save it in db
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-
     const hashResetCode = crypto.createHash("sha256").update(resetCode).digest("hex");
-    console.log(hashResetCode);
     user.passwordResetCode = hashResetCode;
     user.passwordResetCodeExpire = Date.now() + 10 * 60 * 1000;
     user.passwordResetVerified = false;
-    console.log(user);
     await user.save();
+
     // 3) Send the reset code via email
-    res.json("Done");
-})
+    const message = `<h2>Hi ${user.name}</h2> <p>We received a request to reset the password on your E-shop Account.</p> <h3>${resetCode}</h3> <p>Enter this code to complete the reset</p> <p>Thanks for helping us keep your account secure</p><p>The E-shop Team</p>`;
+    try {
+        await sendMail({
+            email: user.email,
+            subject: "Your Password Rest Code (Valid For 10 Minute",
+            message
+        });
+    } catch (err) {
+        user.passwordResetCode = undefined;
+        user.passwordResetCodeExpire = undefined;
+        user.passwordResetVerified = undefined;
+        await user.save();
+        next(new APIError("Username and Password not accepted", 500));
+        return;
+    }
+    res.status(200).json({ status: "Success:)" });
+});
 
 module.exports = {
     signup,
     login,
     forgotPassword
-}
+};

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const APIError = require("../util/APIError");
+// const APIError = require("../util/APIError");
 
 const userSchema = mongoose.Schema(
     {
