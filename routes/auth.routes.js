@@ -3,7 +3,8 @@ const router = require("express").Router();
 const {
     signup,
     login,
-    forgotPassword
+    forgotPassword,
+    verifyRestCode
 } = require("../controllers/auth.controller");
 const {
     signupValidator,
@@ -11,6 +12,8 @@ const {
 } = require("../util/validator/authValidator");
 
 router.post("/forgotPassword", forgotPassword);
+
+router.post("/verifyRestCode", verifyRestCode);
 
 router.post("/signup", signupValidator, signup);
 

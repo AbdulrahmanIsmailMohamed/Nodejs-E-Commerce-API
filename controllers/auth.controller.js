@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt")
 
 const asyncHandling = require("../middlewares/asyncHandler")
-const APIErro = require("../util/APIError");
 const User = require('../models/user');
 const APIError = require('../util/APIError');
 const sendMail = require("../util/sendMail");
@@ -12,7 +11,7 @@ const sendMail = require("../util/sendMail");
 const signup = asyncHandling(async (req, res, next) => {
     const { name, email, password, slug } = req.body;
     const user = await User.create({ name, slug, email, password });
-    if (!user) return next(new APIErro("An error occurred during the registration process"));
+    if (!user) return next(new APIError("An error occurred during the registration process"));
 
     const token = jwt.sign(
         {
@@ -51,7 +50,11 @@ const forgotPassword = asyncHandling(async (req, res, next) => {
 
     // 2) If user exist, Generate hash reset random 6 digits and save it in db
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashResetCode = crypto.createHash("sha256").update(resetCode).digest("hex");
+    const hashResetCode = crypto
+        .createHash("sha256")
+        .update(resetCode)
+        .digest("hex");
+
     user.passwordResetCode = hashResetCode;
     user.passwordResetCodeExpire = Date.now() + 10 * 60 * 1000;
     user.passwordResetVerified = false;
@@ -73,11 +76,29 @@ const forgotPassword = asyncHandling(async (req, res, next) => {
         next(new APIError("Username and Password not accepted", 500));
         return;
     }
-    res.status(200).json({ status: "Success:)" });
+    res.status(200).json({ status: "The Rest Code send in email" });
+});
+
+const verifyRestCode = asyncHandling(async (req, res, next) => {
+    const { resetCode } = req.body;
+    const hashResetCode = crypto
+        .createHash("sha256")
+        .update(resetCode)
+        .digest("hex");
+    const user = await User.findOne({
+        passwordResetCode: hashResetCode,
+        passwordResetCodeExpire: { $gt: Date.now() }
+    }).select("-password");
+    if (!user) return next(new APIError("Rest Code Invalid Or Expired", 400));
+
+    user.passwordResetVerified = true;
+    await user.save();
+    res.status(200).json("Now, Can Change Your Password");
 });
 
 module.exports = {
     signup,
     login,
-    forgotPassword
+    forgotPassword,
+    verifyRestCode
 };
