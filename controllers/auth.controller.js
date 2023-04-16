@@ -96,9 +96,30 @@ const verifyRestCode = asyncHandling(async (req, res, next) => {
     res.status(200).json("Now, Can Change Your Password");
 });
 
+const resetPassword = asyncHandling(async (req, res, next) => {
+    const { email, newPassword } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return next(new APIError(`There is no user with email ${email}`, 404));
+    if (!user.passwordResetVerified) return next(new APIError('Reset code not verified', 400));
+
+    user.password = newPassword;
+    user.passwordResetCode = undefined;
+    user.passwordResetCodeExpire = undefined;
+    user.passwordResetVerified = undefined;
+    await user.save();
+
+    const token = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SEC,
+        { expiresIn: process.env.JWT_EXPIRE }
+    );
+    res.status(200).json({ status: 'Success', token })
+});
+
 module.exports = {
     signup,
     login,
     forgotPassword,
-    verifyRestCode
+    verifyRestCode,
+    resetPassword
 };
