@@ -5,6 +5,7 @@ const sharp = require("sharp");
 const User = require("../models/user");
 const asyncHandler = require("../middlewares/asyncHandler");
 const APIError = require("../util/APIError");
+const createToken = require("../util/createToken");
 
 const { uploadSingleImage } = require("../middlewares/multer");
 const {
@@ -13,7 +14,6 @@ const {
     getAll,
     deleteOne
 } = require("./handlerFactory");
-
 
 // multer
 const uploadUserImage = uploadSingleImage("imgProfile");
@@ -64,8 +64,8 @@ const changePassword = asyncHandler(async (req, res, next) => {
         },
         { new: true }
     );
-    if (!user) return next(new APIError("Your Password Can't Be Updated!!"));
-    res.status(200).json({ success: true, User: user });
+    if (!user) return next(new APIError("Your Password Can't Be Updated!!", 400));
+    res.status(200).json({ status: "success", User: user });
 });
 
 /**
@@ -83,12 +83,41 @@ const getUsers = getAll(User);
 */
 const deleteUser = deleteOne(User);
 
+
 /**
     @access private
 */
 const getLoggedUserId = asyncHandler((req, res, next) => {
     req.params.id = req.user._id;
     next();
+});
+
+/**
+    @access private
+*/
+const changeLoggedUserPassword = asyncHandler(async (req, res, next) => {
+    const password = bcrypt.hashSync(req.body.password, 12);
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            password,
+            changePasswordAt: Date.now()
+        },
+        { new: true }
+    );
+    if (!user) return next(new APIError("Your Password Can't Be Updated!!", 400));
+    // generate Token
+    const token = createToken({ id: user._id, role: user.role });
+    res.status(200).json({ Data: user, token });
+});
+
+/**
+    @access private
+*/
+const inactiveLoggedUser = asyncHandler(async (req, res, next) => {
+    const user = await User.findByIdAndUpdate(req.user._id, { active: false });
+    if (!user) return next(new APIError("User Not Found!!", 404));
+    res.status(204).json({ status: "success" });
 });
 
 module.exports = {
@@ -100,5 +129,7 @@ module.exports = {
     resizeImage,
     uploadUserImage,
     changePassword,
-    getLoggedUserId
+    getLoggedUserId,
+    changeLoggedUserPassword,
+    inactiveLoggedUser
 }

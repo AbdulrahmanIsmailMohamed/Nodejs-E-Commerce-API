@@ -9,7 +9,9 @@ const {
     resizeImage,
     getUser,
     changePassword,
-    getLoggedUserId
+    getLoggedUserId,
+    inactiveLoggedUser,
+    changeLoggedUserPassword
 } = require("../controllers/user.controller");
 
 const {
@@ -24,14 +26,20 @@ const {
     allowTo
 } = require("../config/auth");
 
-router.patch("/change-password/:id", protectRoute, changePasswordValidator, changePassword);
+router.use(protectRoute);
 
-router.get("/getMe", protectRoute, getLoggedUserId, getUser);
+router.patch("/change-password/:id", changePasswordValidator, changePassword);
+
+router.get("/getMe", getLoggedUserId, getUser);
+
+router.patch("/changeMyPassword", changeLoggedUserPassword);
+
+router.delete("/inactiveMyAccount", inactiveLoggedUser);
 
 /**
  * @access private (Admin)
 */
-router.use(protectRoute, allowTo("admin", "manager"));
+router.use(allowTo("admin", "manager"));
 
 router
     .route("/")

@@ -29,6 +29,10 @@ const protectRoute = asyncHandling(async (req, res, next) => {
             return next(new APIError("User Recently Changed Password, Please Login Again!!", 401));
         }
     }
+
+    // 5) check if user active or inactive
+    if (!user.active) return next(new APIError("Your Inactive, please login Again To Active Your Account", 401));
+
     req.user = user;
     next();
 });
