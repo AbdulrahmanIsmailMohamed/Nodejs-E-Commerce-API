@@ -52,7 +52,7 @@ const updateUser = asyncHandler(async (req, res, next) => {
 })
 
 /**
-@access public
+@access private
 */
 const changePassword = asyncHandler(async (req, res, next) => {
     const password = bcrypt.hashSync(req.body.password, 12);
@@ -69,19 +69,27 @@ const changePassword = asyncHandler(async (req, res, next) => {
 });
 
 /**
-@access public
+@access private
 */
 const getUser = getOne(User);
 
 /**
-    @access public
+    @access private
 */
 const getUsers = getAll(User);
 
 /**
     @access private
 */
-const deleteUser = deleteOne(User)
+const deleteUser = deleteOne(User);
+
+/**
+    @access private
+*/
+const getLoggedUserId = asyncHandler((req, res, next) => {
+    req.params.id = req.user._id;
+    next();
+});
 
 module.exports = {
     createUser,
@@ -91,5 +99,6 @@ module.exports = {
     getUsers,
     resizeImage,
     uploadUserImage,
-    changePassword
+    changePassword,
+    getLoggedUserId
 }
