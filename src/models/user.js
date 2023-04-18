@@ -25,6 +25,10 @@ const userSchema = mongoose.Schema(
                 message: `{VALUE} Is Not Valid Email`
             }
         },
+        verifiedEmail: {
+            type: Boolean,
+            default: false
+        },
         password: {
             type: String,
             required: [true, "The Password Is Required"],

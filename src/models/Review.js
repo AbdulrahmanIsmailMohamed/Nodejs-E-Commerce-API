@@ -5,7 +5,7 @@ const reviewSchema = Schema(
         title: {
             type: String
         },
-        retings: {
+        ratings: {
             type: Number,
             min: [1, "The rating is must be at least 1.0"],
             max: [5, "The rating is must be at Most 5.0"]

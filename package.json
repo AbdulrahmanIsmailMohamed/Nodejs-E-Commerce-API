@@ -8,9 +8,9 @@
   ],
   "scripts": {
     "test": "jest",
-    "start:dev": "Node server",
-    "start:prod": "NODE_ENV=production node server",
-    "start:prod:win": "set NODE_ENV=production && node server"
+    "start:dev": "Node src/server",
+    "start:prod": "NODE_ENV=production node src/server",
+    "start:prod:win": "set NODE_ENV=production && node src/server"
   },
   "author": "Abdulrahman Ismail",
   "license": "MIT",

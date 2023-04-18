@@ -1,8 +1,7 @@
-const crypto = require("crypto");
-
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt")
 
+const hashResetCode = require("../util/hashResetCode")
 const asyncHandling = require("../middlewares/asyncHandler")
 const User = require('../models/user');
 const APIError = require('../util/APIError');
@@ -13,7 +12,6 @@ const signup = asyncHandling(async (req, res, next) => {
     const { name, email, password, slug } = req.body;
     const user = await User.create({ name, slug, email, password });
     if (!user) return next(new APIError("An error occurred during the registration process"));
-
     const token = createToken({ id: user._id, role: user.role })
     res.status(201).json({ data: user, token })
 });
@@ -24,7 +22,6 @@ const login = asyncHandling(async (req, res, next) => {
     if (!user || !bcrypt.compareSync(password, user.password)) {
         return next(new APIError("An error occurred in the email Or Password", 400));
     }
-
     const token = createToken({ id: user._id, role: user.role })
     res.status(201).json({ data: user, token })
 });
@@ -38,12 +35,7 @@ const forgotPassword = asyncHandling(async (req, res, next) => {
 
     // 2) If user exist, Generate hash reset random 6 digits and save it in db
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashResetCode = crypto
-        .createHash("sha256")
-        .update(resetCode)
-        .digest("hex");
-
-    user.passwordResetCode = hashResetCode;
+    user.passwordResetCode = hashResetCode(resetCode);
     user.passwordResetCodeExpire = Date.now() + 10 * 60 * 1000;
     user.passwordResetVerified = false;
     await user.save();
@@ -69,13 +61,8 @@ const forgotPassword = asyncHandling(async (req, res, next) => {
 
 const verifyRestCode = asyncHandling(async (req, res, next) => {
     const { resetCode } = req.body;
-    const hashResetCode = crypto
-        .createHash("sha256")
-        .update(resetCode)
-        .digest("hex");
-
     const user = await User.findOne({
-        passwordResetCode: hashResetCode,
+        passwordResetCode: hashResetCode(resetCode),
         passwordResetCodeExpire: { $gt: Date.now() }
     }).select("-password");
     if (!user) return next(new APIError("Rest Code Invalid Or Expired", 400));
