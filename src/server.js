@@ -40,8 +40,8 @@ app.use(`${api}/auth`, authRoute);
 app.use(`${api}/reviews`, reviewRoute);
 
 
-app.all('*', (req, res, nxt) => {
-    nxt(new APIError(`Can't Find This Route ${req.originalUrl}!!`, 400))
+app.all('*', (req, res, next) => {
+    next(new APIError(`Can't Find This Route ${req.originalUrl}!!`, 404))
 });
 
 // Glopal Error Handling Middleware In Express

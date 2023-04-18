@@ -55,9 +55,15 @@ const getAll = (model, modelName = "") =>
         });
     });
 
-const getOne = (model) =>
+const getOne = (model, populateOpt) =>
     asyncHandler(async (req, res, next) => {
-        const document = await model.findById(req.params.id).select("-password -changePasswordAt");
+        let query = model
+            .findById(req.params.id)
+            .select("-password -changePasswordAt");
+        if (populateOpt) {
+            query = query.populate(populateOpt)
+        }
+        const document = await query;
         if (!document) return next(new APIError("The Document Can't Be Found!!", 404));
         res.status(200).json({
             success: true,

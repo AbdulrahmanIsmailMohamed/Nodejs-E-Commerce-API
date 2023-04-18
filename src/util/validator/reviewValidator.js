@@ -10,7 +10,7 @@ const reviewIdValidator = [
         .isMongoId()
         .withMessage("Invalid review Id Format!"),
     validatorMW
-]
+];
 
 const createReviewValidator = [
     check("title")
@@ -58,10 +58,10 @@ const updateReviewValidator = [
             try {
                 const review = await Review.findById(val);
                 if (!review) return Promise.reject(new APIError(`Not Found Review for this id ${req.params.id}`, 404));
-                if (req.user._id !== review.userId) return Promise.reject(new APIError(`Your not allow to access this action`, 401));
+                if (req.user._id.toString() !== review.userId._id.toString()) return Promise.reject(new APIError(`Your not allow to access this action`, 401));
                 return true;
             } catch (err) {
-                console.log(err);
+                return Promise.reject(new APIError("Internal Server Error", 500));
             }
         }),
 
@@ -120,7 +120,7 @@ const deleteReviewValidator = [
                 console.log(err);
             }
         }),
-    
+
     validatorMW
 ]
 

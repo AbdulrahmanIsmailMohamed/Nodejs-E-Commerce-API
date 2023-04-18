@@ -79,7 +79,7 @@ const getProducts = getAll(Product, "Products");
 /**
     @access public
 */
-const getProduct = getOne(Product);
+const getProduct = getOne(Product, "reviews");
 
 module.exports = {
     createProduct,

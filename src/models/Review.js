@@ -12,7 +12,7 @@ const reviewSchema = Schema(
         },
         userId: {
             type: Schema.Types.ObjectId,
-            refs: "User",
+            ref: "User",
             required: [true, "The User Id Is Required"]
         },
         product: {
@@ -23,6 +23,12 @@ const reviewSchema = Schema(
     },
     { timestamp: true }
 );
+
+reviewSchema.pre(/^find/, function (next) {
+    console.log("His");
+    this.populate("userId", "name")
+    next();
+});
 
 const Review = model("Review", reviewSchema);
 
