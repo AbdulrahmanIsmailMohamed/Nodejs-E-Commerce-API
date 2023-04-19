@@ -1,4 +1,6 @@
 const { Schema, model } = require("mongoose");
+const Product = require("./Product")
+const APIError = require("../util/APIError")
 
 const reviewSchema = Schema(
     {
@@ -17,19 +19,60 @@ const reviewSchema = Schema(
         },
         product: {
             type: Schema.Types.ObjectId,
-            refs: "Product",
+            ref: "Product",
             required: [true, "The Product Id Is Required"]
         }
     },
-    { timestamp: true }
+    { timestamps: true }
 );
 
 reviewSchema.pre(/^find/, function (next) {
-    console.log("His");
     this.populate("userId", "name")
     next();
 });
 
+reviewSchema.post("save", async function () {
+    await Review.calcAverageRatingsAndQuantity(this.product)
+});
+
 const Review = model("Review", reviewSchema);
+
+Review.calcAverageRatingsAndQuantity = async function (productId) {
+    const result = await this.aggregate([
+        // get all reviews in a specific product
+        { $match: { product: productId } },
+        // Grouping Reviews Based on productId and cal average Ratings, Ratings Qunatity
+        {
+            $group: {
+                _id: "product",
+                avgRatings: { $avg: "$ratings" },
+                ratingsQuantity: { $sum: 1 }
+            }
+        }
+    ]);
+    console.log(result[0]);
+    if (result.length > 0) {
+        const product = await Product.findByIdAndUpdate(
+            productId,
+            {
+                ratingsAverage: result[0].avgRatings,
+                ratingsQuantity: result[0].ratingsQuantity
+            },
+            { new: true }
+        )
+        // console.log(product);
+        if (!product) return Promise.reject(new APIError("Can't Update Ratings In Product", 400));
+    } else {
+        const product = await Product.findByIdAndUpdate(
+            productId,
+            {
+                ratingsAverage: 0,
+                ratingsQuantity: 0
+            },
+            { new: true }
+        )
+        if (!product) return Promise.reject(new APIError("Can't Update Ratings In Product", 400));
+    }
+};
 
 module.exports = Review;
