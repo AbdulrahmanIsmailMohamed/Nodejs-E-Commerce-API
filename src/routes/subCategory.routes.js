@@ -12,7 +12,8 @@ const {
     updateSubCategory,
     deleteSubCategory,
     getSubCategory,
-    setCategoryId
+    setCategoryId,
+    createFilterObj
 } = require('../controllers/subCategory.controller');
 
 const {
@@ -30,7 +31,7 @@ router
         createSubCategoryValidator,
         createSubCategory
     )
-    .get(getSubCategories)
+    .get(createFilterObj, getSubCategories)
 
 router
     .route("/:id")

@@ -1,5 +1,7 @@
 const router = require("express").Router();
 
+const reviewRoutes = require("./review.routes");
+
 const {
     protectRoute,
     allowTo
@@ -19,6 +21,8 @@ const {
     updateProductValidator,
     productIdValidator
 } = require("../util/validator/productValidator");
+
+router.use("/:productId/reviews", reviewRoutes)
 
 router
     .route("/")

@@ -14,6 +14,13 @@ const setCategoryId = (req, res, next) => {
     next()
 }
 
+const createFilterObj = (req, res, next) => {
+    let filter = {};
+    if (req.params.categoryId) filter = { category: req.params.categoryId };
+    req.filterObj = filter;
+    next();
+}
+
 /**
     @access private
 */
@@ -45,5 +52,6 @@ module.exports = {
     deleteSubCategory,
     getSubCategories,
     getSubCategory,
-    setCategoryId
+    setCategoryId,
+    createFilterObj
 }

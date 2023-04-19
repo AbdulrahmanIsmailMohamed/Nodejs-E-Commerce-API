@@ -1,4 +1,6 @@
-const router = require("express").Router();
+// mergeParams: Allow us to access parameters on another routes
+// exam: we need to access productId From product routes
+const router = require("express").Router({ mergeParams: true });
 
 const { protectRoute, allowTo } = require("../config/auth");
 const {
@@ -6,7 +8,9 @@ const {
     createReview,
     updateReview,
     deleteReview,
-    getReview
+    getReview,
+    createFilterObj,
+    setProductIdAndUserId
 } = require("../controllers/review.controller");
 const {
     createReviewValidator,
@@ -17,9 +21,10 @@ const {
 
 router
     .route("/")
-    .get(getReviews)
+    .get(createFilterObj, getReviews)
     .post(
         protectRoute,
+        setProductIdAndUserId,
         createReviewValidator,
         createReview
     );

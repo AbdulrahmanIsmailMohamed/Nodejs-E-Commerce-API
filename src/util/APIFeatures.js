@@ -54,7 +54,7 @@ class APIFeature {
             } else {
                 filter = { name: { $regex: this.queryString.keyword, $options: "i" } }
                 
-            }
+            }   
             this.mongooseQuery = this.mongooseQuery.find(filter);
         }
         return this

@@ -36,8 +36,10 @@ const updateOne = (model) =>
 
 const getAll = (model, modelName = "") =>
     asyncHandler(async (req, res, next) => {
+        let filter = {};
+        if (req.filterObj) filter = req.filterObj;
         const countDocument = await model.countDocuments()
-        const apiFeature = new APIFeature(model.find(), req.query)
+        const apiFeature = new APIFeature(model.find(filter), req.query)
             .filter()
             .pagination(countDocument)
             .search(modelName)
