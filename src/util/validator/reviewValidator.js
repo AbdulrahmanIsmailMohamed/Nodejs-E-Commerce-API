@@ -113,7 +113,7 @@ const deleteReviewValidator = [
                 if (req.user.role === "user") {
                     const review = await Review.findById(req.params.id);
                     if (!review) return Promise.reject(new APIError(`Not Found Review for this id ${req.params.id}`, 404));
-                    if (req.user._id !== review.userId) return Promise.reject(new APIError(`Your not allow to access this action`, 401));
+                    if (req.user._id.toString() !== review.userId._id.toString()) return Promise.reject(new APIError(`Your not allow to access this action`, 401));
                 }
                 return true;
             } catch (err) {

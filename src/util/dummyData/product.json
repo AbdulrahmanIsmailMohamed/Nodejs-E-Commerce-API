@@ -120,5 +120,16 @@
         "imageCover": "https://fakestoreapi.com/img/61U7T1koQqL._AC_SX679_.jpg",
         "ratingsAverage": 1.6,
         "ratingsQuantity": 5
+    },
+    {
+        "title": "This is a real product",
+        "quantity": 104,
+        "sold": 9,
+        "price": 109,
+        "description": "Easy upgrade for faster boot up, shutdown, application load and response (As compared to 5400 RPM SATA 2.5” hard drive; Based on published specifications and internal benchmarking tests using PCMark vantage scores) Boosts burst write performance, making it ideal for typical PC workloads The perfect balance of performance and reliability Read/write speeds of up to 535MB/s/450MB/s (Based on internal testing; Performance may vary depending upon drive capacity, host device, OS and application.)",
+        "category": "641ceeba0d6788c1362c7334",
+        "subCategories": "6420ea81dc813693de14a308",
+        "brand": "642a0fd73424fd1d633836ca",
+        "imageCover": "https://fakestoreapi.com/img/61U7T1koQqL._AC_SX679_.jpg"
     }
 ]

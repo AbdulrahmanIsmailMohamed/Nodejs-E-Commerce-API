@@ -31,9 +31,20 @@ reviewSchema.pre(/^find/, function (next) {
     next();
 });
 
+
 reviewSchema.post("save", async function () {
-    await Review.calcAverageRatingsAndQuantity(this.product)
+    await Review.calcAverageRatingsAndQuantity(this.product);
 });
+
+// reviewSchema.post("findByIdAndDelete", async function () {
+//     console.log("Middleware function triggered after remove event");
+//     try {
+//         await Review.calcAverageRatingsAndQuantity(this.product);
+//         console.log("calcAverageRatingsAndQuantity executed successfully");
+//     } catch (err) {
+//         console.error(err);
+//     }
+// });
 
 const Review = model("Review", reviewSchema);
 
@@ -41,7 +52,7 @@ Review.calcAverageRatingsAndQuantity = async function (productId) {
     const result = await this.aggregate([
         // get all reviews in a specific product
         { $match: { product: productId } },
-        // Grouping Reviews Based on productId and cal average Ratings, Ratings Qunatity
+        // Grouping Reviews Based on productId and calculate average Ratings, Ratings Qunatity
         {
             $group: {
                 _id: "product",
@@ -50,7 +61,7 @@ Review.calcAverageRatingsAndQuantity = async function (productId) {
             }
         }
     ]);
-    console.log(result[0]);
+    console.log(result);
     if (result.length > 0) {
         const product = await Product.findByIdAndUpdate(
             productId,
