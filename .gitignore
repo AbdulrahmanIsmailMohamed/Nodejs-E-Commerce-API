@@ -1,7 +1,8 @@
 /node_modules
 .env
 Requirements-ex.docx
-/uploads
-/util/dummydata/images
+/src/util/dummyData/images
 test.js
 /__test__
+.nvmrc
+/src/uploads

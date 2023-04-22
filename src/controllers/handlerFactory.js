@@ -1,54 +1,12 @@
 const asyncHandler = require("../middlewares/asyncHandler");
-const Product = require("../models/Product");
 const APIError = require("../util/APIError");
 const APIFeature = require("../util/APIFeatures");
 
-const deleteOne = (model, t = "Review") =>
+const deleteOne = (model) =>
     asyncHandler(async (req, res, next) => {
         const { id } = req.params;
         const document = await model.findByIdAndDelete( id );
         if (!document) return next(new APIError(`No document for this id ${id}`, 404));
-
-        if(t === "Review") {
-            const result = await model.aggregate([
-                // get all reviews in a specific product
-                { $match: { product: document.product } },
-                // Grouping Reviews Based on productId and calculate average Ratings, Ratings Qunatity
-                {
-                    $group: {
-                        _id: "product",
-                        avgRatings: { $avg: "$ratings" },
-                        ratingsQuantity: { $sum: 1 }
-                    }
-                }
-            ]);
-            console.log(result);
-            if (result.length > 0) {
-                const product = await Product.findByIdAndUpdate(
-                    document.product,
-                    {
-                        ratingsAverage: result[0].avgRatings,
-                        ratingsQuantity: result[0].ratingsQuantity
-                    },
-                    { new: true }
-                )
-                // console.log(product);
-                if (!product) return Promise.reject(new APIError("Can't Update Ratings In Product", 400));
-            } else {
-                const product = await Product.findByIdAndUpdate(
-                    productId,
-                    {
-                        ratingsAverage: 0,
-                        ratingsQuantity: 0
-                    },
-                    { new: true }
-                )
-                if (!product) return Promise.reject(new APIError("Can't Update Ratings In Product", 400));
-            }
-        }
-
-        // Trigger "remove" event when remove document
-        // await document.remove() // but it not works in v 6.X
         res.status(204).json({ success: true });
     });
 
