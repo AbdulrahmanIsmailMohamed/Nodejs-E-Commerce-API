@@ -5,7 +5,6 @@ const APIError = require("../util/APIError");
 
 const {
     createOne,
-    deleteOne,
     getAll,
     updateOne,
     getOne

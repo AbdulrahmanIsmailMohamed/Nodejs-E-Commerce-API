@@ -51,9 +51,13 @@ const userSchema = mongoose.Schema(
         imgProfile: String,
         role: {
             type: String,
-            enum: ["user", "admin"],
+            enum: ["user", "admin", "manager"],
             default: "user"
-        }
+        },
+        wishList: [{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Product"
+        }]
     },
     { timestamp: true }
 );
