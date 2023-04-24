@@ -60,7 +60,7 @@ const userSchema = mongoose.Schema(
         }],
         addresses: [{
             id: { type: mongoose.Schema.Types.ObjectId },
-            alias: String,
+            alias: { type: String, unique: true },
             details: String,
             phone: String,
             city: String,
