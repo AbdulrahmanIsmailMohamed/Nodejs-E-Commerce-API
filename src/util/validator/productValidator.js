@@ -4,6 +4,7 @@ const validatorMW = require("../../middlewares/validatorMW");
 const Category = require("../../models/Categories");
 const Product = require("../../models/Product");
 const SubCategory = require("../../models/Sub-Category");
+const APIError = require("../APIError");
 
 const productIdValidator = [
     check("id")
@@ -107,6 +108,7 @@ const createProductValidator = [
                 return true;
             } catch (err) {
                 console.log(err);
+                return Promise.reject(new APIError("Internal Server Error", 500));
             }
         }),
 
@@ -125,6 +127,7 @@ const createProductValidator = [
                 return true
             } catch (err) {
                 console.log(err);
+                return Promise.reject(new APIError("Internal Server Error", 500));
             }
         })
 
@@ -262,6 +265,7 @@ const updateProductValidator = [
                 return true
             } catch (err) {
                 console.log(err);
+                return Promise.reject(new APIError("Internal Server Error", 500));
             }
         }),
 
@@ -279,25 +283,30 @@ const updateProductValidator = [
                 return true;
             } catch (err) {
                 console.log(err);
+                return Promise.reject(new APIError("Internal Server Error", 500));
             }
         })
-
         .custom(async (subCategoriesIds, { req }) => {
-            if (!req.body.category) {
-                const product = await Product.findById(req.params.id);
-                req.body.category = product.category
-                console.log(product);
+            try {
+                if (!req.body.category) {
+                    const product = await Product.findById(req.params.id);
+                    req.body.category = product.category
+                    console.log(product);
+                }
+                const subCategories = await SubCategory.find({ category: req.body.category });
+                console.log(subCategories);
+                if (!subCategories) return Promise.reject(new Error("There is no sub-category belonging to this category"))
+                const subCategoriesIdsInDB = [];
+                subCategories.forEach((subCategory) => {
+                    subCategoriesIdsInDB.push(subCategory._id.toString());
+                });
+                const checker = subCategoriesIds.every((val) => subCategoriesIdsInDB.includes(val));
+                if (!checker) return Promise.reject(new Error("subcategories not belong to category"));
+                return true;
+            } catch (err) {
+                console.log(err);
+                return Promise.reject(new APIError("Internal Server Error", 500));
             }
-            const subCategories = await SubCategory.find({ category: req.body.category });
-            console.log(subCategories);
-            if (!subCategories) return Promise.reject(new Error("There is no sub-category belonging to this category"))
-            const subCategoriesIdsInDB = [];
-            subCategories.forEach((subCategory) => {
-                subCategoriesIdsInDB.push(subCategory._id.toString());
-            });
-            const checker = subCategoriesIds.every((val) => subCategoriesIdsInDB.includes(val));
-            if (!checker) return Promise.reject(new Error("subcategories not belong to category"));
-            return true;
         }),
 
     check('brand')
