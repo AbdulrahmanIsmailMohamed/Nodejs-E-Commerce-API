@@ -17,6 +17,7 @@ const userRoute = require('./routes/user.routes');
 const authRoute = require('./routes/auth.routes');
 const reviewRoute = require('./routes/review.routes');
 const wishlistRoute = require('./routes/wishlist.routes');
+const addressRoute = require('./routes/address.routes');
 
 const app = express();
 const api = process.env.API;
@@ -40,6 +41,7 @@ app.use(`${api}/users`, userRoute);
 app.use(`${api}/auth`, authRoute);
 app.use(`${api}/reviews`, reviewRoute);
 app.use(`${api}/wishlists`, wishlistRoute);
+app.use(`${api}/addresses`, addressRoute);
 
 app.all('*', (req, res, next) => {
     next(new APIError(`Can't Find This Route ${req.originalUrl}!!`, 404))
