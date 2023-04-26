@@ -3,8 +3,11 @@ const { protectRoute, allowTo } = require("../config/auth");
 const {
     addProductToCart,
     getCarts,
-    getCart,
-    deleteCart
+    getSpecificCartItem,
+    deleteSpecificCartItem,
+    deleteCarts,
+    updateTheQuantityofcartItems,
+    applyCoupon
 } = require("../controllers/cart.controller")
 
 router.use(protectRoute, allowTo("user"));
@@ -13,11 +16,14 @@ router
     .route("/")
     .post(addProductToCart)
     .get(getCarts)
+    .delete(deleteCarts)
+
+router.patch('/applyCoupon', applyCoupon);
 
 router
-    .route("/:cartId")
-    // .patch(addProductToCart)
-    .get(getCart)
-    .delete(deleteCart)
+    .route("/:cartItemId")
+    .get(getSpecificCartItem)
+    .patch(updateTheQuantityofcartItems)
+    .delete(deleteSpecificCartItem)
 
 module.exports = router;
