@@ -106,9 +106,7 @@ const applyCoupon = asyncHandler(async (req, res, next) => {
     );
     if (!coupon) return next(new APIError("Coupon Name Not Valid Or Expire", 400));
     const totalPrice = calculateTotalPriceBeforeDescount(cart);
-    console.log(totalPrice);
     const totalPriceAfterDiscount = (totalPrice - ((coupon.discount * totalPrice) / 100));
-    console.log(totalPriceAfterDiscount);
     cart.totalPriceAfterDiscount = totalPriceAfterDiscount;
     await cart.save();
     res.status(200).json({ success: true, numberOfCartItems: cart.cartItems.length, cart });
