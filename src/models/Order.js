@@ -7,9 +7,9 @@ const orderSchema = Schema(
             ref: "User",
             required: [true, "The User Id Must Be Not Null"]
         },
-        cartItem: [
+        cartItems: [
             {
-                product: {
+                productId: {
                     type: Schema.Types.ObjectId,
                     ref: 'Product',
                     required: [true, "The Product Id Must Be Not Null"]
@@ -23,12 +23,12 @@ const orderSchema = Schema(
             type: Number,
             default: 0,
         },
-        // shippingAddress: {
-        //     details: String,
-        //     phone: String,
-        //     city: String,
-        //     postalCode: String,
-        // },
+        shippingAddress: {
+            details: String,
+            phone: String,
+            city: String,
+            postalCode: String,
+        },
         shippingPrice: {
             type: Number,
             default: 0,
