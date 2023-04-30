@@ -41,7 +41,7 @@ const server = app.listen(port, () => {
     console.log(`The Server Running In Port ${port}`);
 });
 
-// Any error can happen out express
+// Any error can happen out express.
 // Handling Asynchronous
 process.on("unhandledRejection", (err) => {
     console.log({
