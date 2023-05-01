@@ -4,6 +4,15 @@ const asyncHandler = require("../middlewares/asyncHandler");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 
+const {
+    getAll,
+    getOne,
+    deleteOne
+} = require("./handlerFactory");
+
+/**
+* @access user
+*/
 const createOrder = asyncHandler(async (req, res, next) => {
     // app sitting by Admin
     let taxPrice = 0; let shippingPrice = 0;
@@ -42,7 +51,7 @@ const createOrder = asyncHandler(async (req, res, next) => {
     }));
 
     await Product.bulkWrite(bulkWriteOpt, {})
-    
+
     // clear cart depend on cart id
     const deleteCart = await Cart.findByIdAndDelete(cartId);
     if (!deleteCart) return next(new APIError("Can't Be Found Cart!!", 404));
@@ -50,6 +59,31 @@ const createOrder = asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, order });
 });
 
+const createFilterObj = (req, res, next) => {
+    if (req.user.role === "user") req.filterObj = { userId: req.user._id };
+    next();
+}
+
+/**
+* @access admin, user 
+*/
+const getAllOrders = getAll(Order);
+
+/**
+* @access admin, user 
+*/
+const getSpecificOrder = getOne(Order);
+
+
+/**
+* @access  user 
+*/
+const deleteOrder = deleteOne(Order);
+
 module.exports = {
-    createOrder
+    createOrder,
+    createFilterObj,
+    getAllOrders,
+    getSpecificOrder,
+    deleteOrder
 }
