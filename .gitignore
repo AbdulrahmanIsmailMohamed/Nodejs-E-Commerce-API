@@ -2,7 +2,7 @@
 .env
 Requirements-ex.docx
 /src/util/dummyData/images
-test.js
+/src/test.js
 /__test__
 .nvmrc
 /src/uploads
