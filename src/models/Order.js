@@ -55,6 +55,12 @@ const orderSchema = Schema(
     { timestamps: true }
 );
 
+orderSchema.pre(/^find/, function (next) {
+    this.populate("userId", "name email addresses imgProfile")
+        .populate("cartItems.productId", "title imageCover");
+    next();
+})
+
 const Order = model("Order", orderSchema);
 
 module.exports = Order;

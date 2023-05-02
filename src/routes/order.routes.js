@@ -5,7 +5,9 @@ const {
     getAllOrders,
     getSpecificOrder,
     deleteOrder,
-    createFilterObj
+    createFilterObj,
+    updateOrderStatusToDelivered,
+    updateOrderStatusToPaid
 } = require("../controllers/order.controller");
 const { protectRoute, allowTo } = require("../config/auth");
 const { createOrderValidator, orderIdValidator } = require("../util/validator/orderValidator");
@@ -21,7 +23,7 @@ router.post(
 
 router.get(
     "/",
-    allowTo("user", "admin"),
+    allowTo("user", "admin", "manager"),
     createFilterObj,
     getAllOrders
 )
@@ -29,7 +31,7 @@ router.get(
 router
     .route("/:id")
     .get(
-        allowTo("user", "admin"),
+        allowTo("user", "admin", "manager"),
         orderIdValidator,
         getSpecificOrder
     )
@@ -38,5 +40,8 @@ router
         orderIdValidator,
         deleteOrder
     )
+
+router.patch("/:id/pay", allowTo("admin", "manager"), updateOrderStatusToPaid)
+router.patch("/:id/deliver", allowTo("admin", "manager"), updateOrderStatusToDelivered)
 
 module.exports = router;

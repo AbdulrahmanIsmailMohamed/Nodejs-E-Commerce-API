@@ -49,7 +49,6 @@ const createOrder = asyncHandler(async (req, res, next) => {
             update: { $inc: { quantity: -item.quantity, sold: +item.quantity } }
         }
     }));
-
     await Product.bulkWrite(bulkWriteOpt, {})
 
     // clear cart depend on cart id
@@ -74,16 +73,43 @@ const getAllOrders = getAll(Order);
 */
 const getSpecificOrder = getOne(Order);
 
-
 /**
 * @access  user 
 */
 const deleteOrder = deleteOne(Order);
+
+/**
+* @access admin, manager
+*/
+const updateOrderStatusToPaid = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new APIError(`Not Found Order For This Id ${req.params.id}`, 404));
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    const orderPaid = await order.save();
+    if (!orderPaid) return next(new APIError(`The Order Can't Be Updated!!`, 400));
+    res.status(200).json({ success: true, orderPaid });
+});
+
+/**
+* @access admin, manager
+*/
+const updateOrderStatusToDelivered = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new APIError(`Not Found Order For This Id ${req.params.id}`, 404));
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+    const orderDelivered = await order.save();
+    if (!orderDelivered) return next(new APIError(`The Order Can't Be Updated!!`, 400));
+    res.status(200).json({ success: true, orderDelivered });
+});
 
 module.exports = {
     createOrder,
     createFilterObj,
     getAllOrders,
     getSpecificOrder,
-    deleteOrder
+    deleteOrder,
+    updateOrderStatusToPaid,
+    updateOrderStatusToDelivered
 }

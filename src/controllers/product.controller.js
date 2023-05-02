@@ -26,7 +26,7 @@ const imageProcessing = asyncHandler(async (req, res, next) => {
             .resize(1200, 1200)
             .toFormat("jpeg", { quality: 90 })
             // .jpeg({ quality: 90 })
-            .toFile(`uploads/products/${uniqueSuffix}`);
+            .toFile(`src/uploads/products/${uniqueSuffix}`);
 
         // save image into our db
         //* url: http://localhost:3333/api/v1/products/product--036615f5-c390-48fb-99ce-2d03330bb47f--1680570794277--cover.jpeg
@@ -44,7 +44,7 @@ const imageProcessing = asyncHandler(async (req, res, next) => {
                 .resize(1200, 1200)
                 .toFormat("jpeg", { quality: 90 })
                 // .jpeg({ quality: 90 })
-                .toFile(`uploads/products/${uniqueSuffix}`);
+                .toFile(`src/uploads/products/${uniqueSuffix}`);
 
             // save image into our db
             //* url: http://localhost:3333/api/v1/products/product--036615f5-c390-48fb-99ce-2d03330bb47f--1680570794277--1.jpeg
@@ -52,7 +52,7 @@ const imageProcessing = asyncHandler(async (req, res, next) => {
             req.body.images.push(basePath)
         }));
     }
-    else next(new APIError("Not Found Image", 400));
+    // else next(new APIError("Not Found Image", 400));
     next();
 });
 

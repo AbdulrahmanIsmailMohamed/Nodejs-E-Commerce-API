@@ -27,7 +27,7 @@ const resizeImage = asyncHandler(async (req, res, next) => {
             .resize(600, 600)
             .toFormat('jpeg')
             .jpeg({ quality: 95 })
-            .toFile(`uploads/categories/${filename}`);
+            .toFile(`src/uploads/categories/${filename}`);
 
         // Save image into our db
         const api = process.env.API
