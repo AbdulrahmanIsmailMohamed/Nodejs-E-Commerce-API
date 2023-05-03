@@ -126,14 +126,6 @@ const createCheckoutSession = asyncHandler(async (req, res, next) => {
 
     // Create stripe checkout session
     const session = await stripe.checkout.sessions.create({
-        // line_items: [
-        //     {
-        //         name: req.user.name,
-        //         price: totalOrderPrice * 100,
-        //         currency: 'egp',
-        //         quantity: 1,
-        //     }
-        // ],
         payment_method_types: ['card'],
         line_items: [
             {
@@ -154,7 +146,6 @@ const createCheckoutSession = asyncHandler(async (req, res, next) => {
         client_reference_id: req.params.cartId,
         metadata: req.body.shippingAddress,
     });
-
     res.status(200).json({ success: true, session })
 })
 
