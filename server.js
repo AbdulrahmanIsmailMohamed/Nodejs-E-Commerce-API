@@ -8,11 +8,11 @@ const compression = require('compression');
 require("dotenv").config();
 
 // routes
-const mounter = require('./routes');
+const mounter = require('./src/routes');
 
-require("./config/connect");
-const errorHandling = require("./middlewares/errorHandling");
-const APIError = require("./util/APIError");
+require("./src/config/connect");
+const errorHandling = require("./src/middlewares/errorHandling");
+const APIError = require("./src/util/APIError");
 
 const app = express();
 const api = process.env.API;
