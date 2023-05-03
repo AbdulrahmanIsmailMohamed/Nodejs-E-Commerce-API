@@ -27,12 +27,17 @@ app.use(compression());
 // middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+console.log(__dirname, express.static(path.join(__dirname, 'uploads')));
 app.use(`${api}`, express.static(path.join(__dirname, 'uploads')));
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
     console.log(`mode: ${process.env.NODE_ENV}`);
 }
+
+app.get(`/`, (req, res, next) => {
+    res.redirect(`${api}/products`)
+})
 
 // routes
 mounter(app, api);

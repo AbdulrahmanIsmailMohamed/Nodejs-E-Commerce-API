@@ -9,7 +9,7 @@ const APIError = require("../APIError");
 const productIdValidator = [
     check("id")
         .isMongoId()
-        .withMessage("Invalid Category Id Format!"),
+        .withMessage("Invalid Product Id Format!"),
     validatorMW
 ]
 
