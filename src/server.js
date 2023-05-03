@@ -2,17 +2,27 @@ const path = require('path')
 
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
+const compression = require('compression');
+
 require("dotenv").config();
+
+// routes
+const mounter = require('./routes');
 
 require("./config/connect");
 const errorHandling = require("./middlewares/errorHandling");
 const APIError = require("./util/APIError");
 
-// routes
-const mounter = require('./routes');
-
 const app = express();
 const api = process.env.API;
+
+// cors => allow other domains to access your routes
+app.use(cors());
+app.options('*', cors()); // include before other routes
+
+// compression all responses
+app.use(compression());
 
 // middleware
 app.use(express.urlencoded({ extended: false }));
@@ -65,4 +75,3 @@ process.on("uncaughtException", (err) => {
         stack: `${err.stack}`
     });
 });
-

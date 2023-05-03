@@ -1,3 +1,5 @@
+const stripe = require("stripe")(process.env.STRIP_SECRET);
+
 const Cart = require("../models/Cart");
 const APIError = require("../util/APIError");
 const asyncHandler = require("../middlewares/asyncHandler");
@@ -9,6 +11,7 @@ const {
     getOne,
     deleteOne
 } = require("./handlerFactory");
+
 
 /**
 * @access user
@@ -104,6 +107,57 @@ const updateOrderStatusToDelivered = asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, orderDelivered });
 });
 
+/**
+* @access user
+*/
+const createCheckoutSession = asyncHandler(async (req, res, next) => {
+    console.log("hi");
+    // app sitting by Admin
+    let taxPrice = 0; let shippingPrice = 0;
+
+    // get cart depend on cartId 
+    const { cartId } = req.params
+    const cart = await Cart.findById(cartId);
+    if (!cart) return next(new APIError(`Not Found Cart For This Id ${cartId}`, 404));
+
+    // get order price depend on cart price (check if coupon apply)
+    const totalPrice = cart.totalPriceAfterDiscount ? cart.totalPriceAfterDiscount : cart.totalCartPrice;
+    const totalOrderPrice = totalPrice + taxPrice + shippingPrice;
+
+    // Create stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+        // line_items: [
+        //     {
+        //         name: req.user.name,
+        //         price: totalOrderPrice * 100,
+        //         currency: 'egp',
+        //         quantity: 1,
+        //     }
+        // ],
+        payment_method_types: ['card'],
+        line_items: [
+            {
+                price_data: {
+                    currency: 'egp',
+                    unit_amount: totalOrderPrice * 100,
+                    product_data: {
+                        name: req.user.name,
+                    },
+                },
+                quantity: 1,
+            }
+        ],
+        mode: "payment",
+        success_url: `${req.protocol}://${req.get("host")}${process.env.API}/orders`,
+        cancel_url: `${req.protocol}://${req.get("host")}${process.env.API}/carts`,
+        customer_email: req.user.email,
+        client_reference_id: req.params.cartId,
+        metadata: req.body.shippingAddress,
+    });
+
+    res.status(200).json({ success: true, session })
+})
+
 module.exports = {
     createOrder,
     createFilterObj,
@@ -111,5 +165,6 @@ module.exports = {
     getSpecificOrder,
     deleteOrder,
     updateOrderStatusToPaid,
-    updateOrderStatusToDelivered
+    updateOrderStatusToDelivered,
+    createCheckoutSession
 }
