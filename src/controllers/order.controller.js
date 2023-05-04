@@ -149,6 +149,33 @@ const createCheckoutSession = asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, session })
 })
 
+const createWebhookCheckout = asyncHandler(async (req, res, next) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.WEBHOOK_SECRET);
+    } catch (err) {
+        res.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
+    // Handle the event
+
+    if (event.type === "order.created") console.log("Create Order .....");
+
+    // switch (event.type) {
+    //     case 'order.created':
+    //         const orderCreated = event.data.object;
+    //         // Then define and call a function to handle the event order.created
+    //         break;
+    //     // ... handle other event types
+    //     default:
+    //         console.log(`Unhandled event type ${event.type}`);
+    // }
+
+    // Return a 200 response to acknowledge receipt of the event
+});
+
+
 module.exports = {
     createOrder,
     createFilterObj,
@@ -157,5 +184,6 @@ module.exports = {
     deleteOrder,
     updateOrderStatusToPaid,
     updateOrderStatusToDelivered,
-    createCheckoutSession
+    createCheckoutSession,
+    createWebhookCheckout
 }

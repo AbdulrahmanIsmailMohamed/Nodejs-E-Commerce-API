@@ -4,8 +4,9 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const compression = require('compression');
-
 require("dotenv").config();
+
+const { createWebhookCheckout } = require("./src/controllers/order.controller")
 
 // routes
 const mounter = require('./src/routes');
@@ -23,6 +24,9 @@ app.options('*', cors()); // include before other routes
 
 // compression all responses
 app.use(compression());
+
+// webhook
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), createWebhookCheckout)
 
 // middleware
 app.use(express.urlencoded({ extended: false }));
