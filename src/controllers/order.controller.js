@@ -164,7 +164,10 @@ const createWebhookCheckout = asyncHandler(async (req, res, next) => {
     }
     // Handle the event
 
-    if (event.type === "checkout.session.completed") console.log("Create Order .....");
+    if (event.type === "checkout.session.completed") {
+        console.log("Hi");
+        console.log(event.data.object.client_reference_id);
+    }
 
     // switch (event.type) {
     //     case 'order.created':
