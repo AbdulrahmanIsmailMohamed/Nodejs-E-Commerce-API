@@ -26,7 +26,7 @@ app.options('*', cors()); // include before other routes
 app.use(compression());
 
 // webhook
-app.post('/webhook-checkout', express.raw({ type: 'application/json' }), createWebhookCheckout)
+app.post(`${api}/webhook-checkout`, express.raw({ type: 'application/json' }), createWebhookCheckout)
 
 // middleware
 app.use(express.urlencoded({ extended: false }));
