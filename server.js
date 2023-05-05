@@ -31,8 +31,7 @@ app.post(`${api}/webhook-checkout`, express.raw({ type: 'application/json' }), c
 // middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-console.log(__dirname, express.static(path.join(__dirname, 'uploads')));
-app.use(`${api}`, express.static(path.join(__dirname, 'uploads')));
+app.use(`${api}`, express.static(path.join(__dirname, './src/uploads')));
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
