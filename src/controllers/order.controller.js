@@ -5,6 +5,7 @@ const APIError = require("../util/APIError");
 const asyncHandler = require("../middlewares/asyncHandler");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const User = require("../models/user")
 
 const {
     getAll,
@@ -38,14 +39,6 @@ const createOrder = asyncHandler(async (req, res, next) => {
     if (!order) return next(new APIError("The Order Can't Be Created!!", 400));
 
     // after creating order, decrement product quantity, increment product sold
-    /*cart.cartItems.forEach(async (item) => {
-        const product = await Product.findById(item.productId);
-        if (!product) return next(new APIError("Not Found Product", 404));
-        product.quantity -= item.quantity;
-        product.sold += item.quantity
-        await product.save();
-    });*/
-
     const bulkWriteOpt = cart.cartItems.map((item) => ({
         updateOne: {
             filter: { _id: item.productId },
@@ -147,8 +140,11 @@ const createCheckoutSession = asyncHandler(async (req, res, next) => {
         metadata: req.body.shippingAddress,
     });
     res.status(200).json({ success: true, session })
-})
+});
 
+/**
+* @access user
+*/
 const createWebhookCheckout = asyncHandler(async (req, res, next) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -163,25 +159,40 @@ const createWebhookCheckout = asyncHandler(async (req, res, next) => {
         return;
     }
     // Handle the event
-
     if (event.type === "checkout.session.completed") {
-        console.log("Hi");
-        console.log(event.data.object.client_reference_id);
+        const session = event.data.object
+        const userEmail = session.customer_email;
+        const cartId = session.client_reference_id;
+        const totalOrderPrice = session.amount_total / 100;
+        const user = await User.findOne({ email: userEmail });
+        if (!user) return next(new APIError(`Not Found User For This Email ${userEmail}`, 404));
+        const cart = await Cart.findById(cartId);
+        if (!cart) return next(new APIError(`Not Found Cart For This Id ${cartId}`, 404));
+        // create Order
+        const order = await Order.create({
+            userId: user._id,
+            cartItems: cart.cartItems,
+            totalOrderPrice,
+            isPaid: true,
+            paidAt: Date.now(),
+            paymentMethodType: "card"
+        });
+        if (!order) return next(new APIError(`Can't Be created Order!`, 400));
+        // after create order, decrement product quantity, increment product sold
+        const bulkWriteOpt = cart.cartItems.map((item) => ({
+            updateOne: {
+                filter: { _id: item.productId },
+                update: { $inc: { quantity: -item.quantity, sold: + item.quantity } }
+            }
+        }));
+        await Product.bulkWrite(bulkWriteOpt, {});
+        const deleteCart = await Cart.findByIdAndDelete(cartId);
+        if (!deleteCart) return next(new APIError("Can't Be Found Cart!!", 404));
+    } else {
+        res.status(400).json({ success: false })
     }
-
-    // switch (event.type) {
-    //     case 'order.created':
-    //         const orderCreated = event.data.object;
-    //         // Then define and call a function to handle the event order.created
-    //         break;
-    //     // ... handle other event types
-    //     default:
-    //         console.log(`Unhandled event type ${event.type}`);
-    // }
-
-    // Return a 200 response to acknowledge receipt of the event
+    res.status(200).json({ recieved: true });
 });
-
 
 module.exports = {
     createOrder,

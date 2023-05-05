@@ -15,7 +15,6 @@ const { createOrderValidator, orderIdValidator } = require("../util/validator/or
 
 router.use(protectRoute)
 
-
 router.get(
     "/",
     allowTo("user", "admin", "manager"),
