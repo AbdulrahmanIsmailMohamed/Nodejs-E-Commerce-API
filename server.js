@@ -4,6 +4,9 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const compression = require('compression');
+const Csrf = require("csrf");
+const session = require('express-session');
+
 require("dotenv").config();
 
 const { createWebhookCheckout } = require("./src/controllers/order.controller")
@@ -32,13 +35,29 @@ app.post(
     `${api}/webhook-checkout`,
     express.raw({ type: 'application/json' }),
     createWebhookCheckout
-)
+);
 
 // middleware
 app.use(express.urlencoded({ extended: false, limit: "20kb" }));
 app.use(express.json({ limit: "20kb" }));
 app.use(`${api}`, express.static(path.join(__dirname, './src/uploads')));
 
+// CSRF
+const tokens = new Csrf();
+app.use(session({
+    secret: process.env.CSRF_SEC,
+    resave: false,
+    saveUninitialized: false
+}));
+app.use((req, res, next) => {
+    if (!req.session.csrfSecret) {
+        req.session.csrfSecret = tokens.secretSync();
+    }
+    res.locals._csrf = tokens.create(req.session.csrfSecret);
+    next();
+});
+
+// morgan to log any request
 if (process.env.NODE_ENV === 'development') {
     // app.use(morgan('dev'));
     app.use(morgan("tiny", { stream: logger.stream }));
