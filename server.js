@@ -7,13 +7,15 @@ const compression = require('compression');
 require("dotenv").config();
 
 const { createWebhookCheckout } = require("./src/controllers/order.controller")
+const logger = require('./logger');
+const errorHandling = require("./src/middlewares/errorHandling");
+const APIError = require("./src/util/APIError");
+
+// db
+require("./src/config/connect");
 
 // routes
 const mounter = require('./src/routes');
-
-require("./src/config/connect");
-const errorHandling = require("./src/middlewares/errorHandling");
-const APIError = require("./src/util/APIError");
 
 const app = express();
 const api = process.env.API;
@@ -26,7 +28,11 @@ app.options('*', cors()); // include before other routes
 app.use(compression());
 
 // webhook
-app.post(`${api}/webhook-checkout`, express.raw({ type: 'application/json' }), createWebhookCheckout)
+app.post(
+    `${api}/webhook-checkout`,
+    express.raw({ type: 'application/json' }),
+    createWebhookCheckout
+)
 
 // middleware
 app.use(express.urlencoded({ extended: false, limit: "20kb" }));
@@ -34,7 +40,8 @@ app.use(express.json({ limit: "20kb" }));
 app.use(`${api}`, express.static(path.join(__dirname, './src/uploads')));
 
 if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
+    // app.use(morgan('dev'));
+    app.use(morgan("tiny", { stream: logger.stream }));
     console.log(`mode: ${process.env.NODE_ENV}`);
 }
 

@@ -5,4 +5,4 @@ Requirements-ex.docx
 /src/test.js
 /__test__
 .nvmrc
-# /src/uploads
+/log

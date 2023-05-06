@@ -33,7 +33,9 @@
     "sharp": "^0.32.0",
     "slugify": "^1.6.5",
     "stripe": "^12.3.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "eslint": "^8.36.0",
