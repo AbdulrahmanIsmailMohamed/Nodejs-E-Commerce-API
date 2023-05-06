@@ -6,6 +6,7 @@ const cors = require("cors");
 const compression = require('compression');
 const Csrf = require("csrf");
 const session = require('express-session');
+const hpp = require('hpp');
 
 require("dotenv").config();
 
@@ -63,6 +64,20 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan("tiny", { stream: logger.stream }));
     console.log(`mode: ${process.env.NODE_ENV}`);
 }
+
+// Middleware to protect against HTTP Parameter Pollution attacks
+app.use(
+    hpp({
+        whitelist: [
+            "quantity",
+            "sold",
+            "price",
+            "ratingsQuantity",
+            "ratingsAverage",
+            "images"
+        ]
+    })
+);
 
 app.get(`/`, (req, res, next) => {
     res.redirect(`${api}/products`)
