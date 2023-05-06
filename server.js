@@ -29,8 +29,8 @@ app.use(compression());
 app.post(`${api}/webhook-checkout`, express.raw({ type: 'application/json' }), createWebhookCheckout)
 
 // middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: false, limit: "20kb" }));
+app.use(express.json({ limit: "20kb" }));
 app.use(`${api}`, express.static(path.join(__dirname, './src/uploads')));
 
 if (process.env.NODE_ENV === 'development') {
