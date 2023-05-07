@@ -79,7 +79,7 @@ userSchema.pre("save", function (next) {
 });
 
 userSchema.pre(/^find/, function (next) {
-    this.select("-__v")
+    this.select("-__v");
     next();
 });
 

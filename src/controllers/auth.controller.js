@@ -8,12 +8,17 @@ const APIError = require('../util/APIError');
 const sendMail = require("../util/sendMail");
 const createToken = require("../util/createToken");
 
+const {
+    senitizeUserLogin,
+    senitizeUserSignup
+} = require('../util/senitizeData');
+
 const signup = asyncHandling(async (req, res, next) => {
     const { name, email, password, slug } = req.body;
     const user = await User.create({ name, slug, email, password });
     if (!user) return next(new APIError("An error occurred during the registration process"));
     const token = createToken({ id: user._id, role: user.role })
-    res.status(201).json({ data: user, token })
+    res.status(201).json({ data: senitizeUserSignup(user), token })
 });
 
 const login = asyncHandling(async (req, res, next) => {
@@ -23,7 +28,7 @@ const login = asyncHandling(async (req, res, next) => {
         return next(new APIError("An error occurred in the email Or Password", 400));
     }
     const token = createToken({ id: user._id, role: user.role })
-    res.status(201).json({ data: user, token })
+    res.status(200).json({ data: senitizeUserLogin(user), token })
 });
 
 const forgotPassword = asyncHandling(async (req, res, next) => {
