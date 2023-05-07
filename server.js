@@ -71,7 +71,14 @@ app.use((req, res, next) => {
     next();
 });
 
-
+// session
+app.use(session({
+    secret: process.env.SESSION_SEC,
+    name: "my-session-cookie",
+    cookie: { secure: true, httpOnly: true, path: '/auth', sameSite: true },
+    resave: false,
+    saveUninitialized: false
+}));
 
 // Middleware to protect against HTTP Parameter Pollution attacks
 app.use(
