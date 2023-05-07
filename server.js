@@ -8,7 +8,8 @@ const Csrf = require("csrf");
 const session = require('express-session');
 const hpp = require('hpp');
 const mongoSanitize = require("express-mongo-sanitize");
-const xss = require('xss-clean')
+const xss = require('xss-clean');
+const helmet = require("helmet");
 
 require("dotenv").config();
 
@@ -32,6 +33,9 @@ app.options('*', cors()); // include before other routes
 
 // compression all responses
 app.use(compression());
+
+// Add various HTTP headers
+app.use(helmet())
 
 // webhook
 app.post(
