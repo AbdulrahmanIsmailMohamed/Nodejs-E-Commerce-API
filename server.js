@@ -7,6 +7,8 @@ const compression = require('compression');
 const Csrf = require("csrf");
 const session = require('express-session');
 const hpp = require('hpp');
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require('xss-clean')
 
 require("dotenv").config();
 
@@ -43,6 +45,17 @@ app.use(express.urlencoded({ extended: false, limit: "20kb" }));
 app.use(express.json({ limit: "20kb" }));
 app.use(`${api}`, express.static(path.join(__dirname, './src/uploads')));
 
+// morgan to log any request
+if (process.env.NODE_ENV === 'development') {
+    // app.use(morgan('dev'));
+    app.use(morgan("tiny", { stream: logger.stream }));
+    console.log(`mode: ${process.env.NODE_ENV}`);
+}
+
+// to apply data senitization 
+app.use(mongoSanitize());
+app.use(xss())
+
 // CSRF
 const tokens = new Csrf();
 app.use(session({
@@ -58,12 +71,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// morgan to log any request
-if (process.env.NODE_ENV === 'development') {
-    // app.use(morgan('dev'));
-    app.use(morgan("tiny", { stream: logger.stream }));
-    console.log(`mode: ${process.env.NODE_ENV}`);
-}
+
 
 // Middleware to protect against HTTP Parameter Pollution attacks
 app.use(
