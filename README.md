@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <h1 align="center">
-  <a href="https://github.com/AbdulrahmanIsmailMohamed/EcommerceAPI">
+  <a href="https://github.com/AbdulrahmanIsmailMohamed/Nodejs-E-Commerce-API">
     <img src="https://hackernoon.com/hn-images/1*lAR9Uh_gJ7dp23e0vhy5Hg.png" alt="Logo" width="200" height="200">
   </a>
 
@@ -198,4 +198,4 @@ Please enjoy and feel free to share your opinion, constructive criticism, or com
 
 Email - [abdulrahman.ismail.mohammed@gmail.com]
 
-Project: [https://github.com/Braineanear/EcommerceAPI](https://github.com/Braineanear/EcommerceAPI)
+Project: [https://github.com/AbdulrahmanIsmailMohamed/Nodejs-E-Commerce-API](https://github.com/AbdulrahmanIsmailMohamed/Nodejs-E-Commerce-API)
