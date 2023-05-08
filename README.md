@@ -44,7 +44,7 @@
 
 ## Deployed Version
 
-Live demo (Feel free to visit) 👉 :  <a href="nodejs-e-commerce-api.cyclic.app/">Node.js E-commerce Api </a>
+Live demo (Feel free to visit) 👉 : [Node.js E-commerce Api](https://nodejs-e-commerce-api.cyclic.app)
 
 ## Key Features
 
