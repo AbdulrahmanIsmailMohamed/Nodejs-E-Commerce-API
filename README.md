@@ -155,7 +155,12 @@ List of any major frameworks used to build the project.
 * [Bcrypt](https://www.npmjs.com/package/bcrypt) - Encryption & Decryption Algorithm
 * [Compression](https://www.npmjs.com/package/compression) - NodeJS compression middleware
 * [Cors](https://www.npmjs.com/package/cors) - NodeJS package for providing a Connect/Express middleware that can be used to enable CORS with various options
+* [HPP](https://www.npmjs.com/package/hpp) - provides middleware for Express.js web applications to protect against HTTP Parameter Pollution attacks 
+* [SHARP](https://www.npmjs.com/package/sharp) -  image processing and manipulation in Node.js. It is a high-performance image processing library that can be used to resize, crop, rotate, and convert images to different formats.
+* [UUID](https://www.npmjs.com/package/uuid) - generating universally unique identifiers (UUIDs) in Node.js. UUIDs are 128-bit unique identifiers that can be used to identify objects, entities, or resources in distributed systems. 
 * [Express Mongo Sanitize](https://www.npmjs.com/package/express-mongo-sanitize) - Express 4.x middleware which sanitizes user-supplied data to prevent MongoDB Operator Injection.
+* [Espress-Session](https://www.npmjs.com/package/express-session) - managing user sessions in Express.js web applications.
+* [CSRF](https://www.npmjs.com/package/csrf) - this package provide middleware that can be protect against CSRF attacks
 * [Slugify](https://www.npmjs.com/package/slugify) - Slugifies a string
 * [Dotenv](https://www.npmjs.com/package/dotenv) - Loads environment variables from a . env file into process. env
 * [Rate Limiter](https://www.npmjs.com/package/express-rate-limit) - Basic IP rate-limiting middleware for Express
@@ -168,6 +173,7 @@ List of any major frameworks used to build the project.
 * [Winston](https://www.npmjs.com/package/winston) - A logger for just about everything.
 * [XSS Clean](https://www.npmjs.com/package/xss-clean) - Middleware to sanitize user input
 * [Stripe](https://www.npmjs.com/package/stripe) - The Stripe Node library provides convenient access to the Stripe API from applications written in server-side JavaScript.
+* [Eslint](https://www.npmjs.com/package/eslint) - provides a pluggable linting utility for JavaScript. Linting is the process of checking source code for potential errors, code style issues, and other problems. 
 
 ## Installation
 
