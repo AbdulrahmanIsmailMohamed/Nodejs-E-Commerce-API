@@ -58,7 +58,7 @@ const forgotPassword = asyncHandling(async (req, res, next) => {
         user.passwordResetCodeExpire = undefined;
         user.passwordResetVerified = undefined;
         await user.save();
-        next(new APIError("Username and Password not accepted", 500));
+        next(new APIError("Internal Serever Error", 500));
         return;
     }
     res.status(200).json({ status: "The Rest Code send in email" });
