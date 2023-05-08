@@ -21,9 +21,6 @@
       <a href="#key-features">Key Features</a>
     </li>
     <li>
-      <a href="#api-usage">API Usage</a>
-    </li>
-    <li>
       <a href="#deployment">Deployment</a>
     </li>
     <li>
@@ -136,10 +133,6 @@ Live demo (Feel free to visit) 👉 :  <a href="nodejs-e-commerce-api.cyclic.app
   * Create Address [User]
   * Get Logged User Addresses [User]
   * Delete Address [User]
-  
-## API Usage
-
-Check [Ecommerce API Documentation]() for more info.
 
 ## Deployment
 
