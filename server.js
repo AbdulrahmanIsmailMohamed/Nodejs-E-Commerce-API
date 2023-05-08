@@ -8,6 +8,7 @@ const cors = require("cors");
 const compression = require('compression');
 const Csrf = require("csrf");
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 const hpp = require('hpp');
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require('xss-clean');
@@ -62,12 +63,24 @@ if (process.env.NODE_ENV === 'development') {
 app.use(mongoSanitize());
 app.use(xss())
 
+// Store Session in mongodb
+const store = new MongoDBStore({
+    uri: process.env.MONGO_URL,
+    collection: 'mySessions'
+});
+
+// Catch errors from store session
+store.on('error', (error) => {
+    console.log(error);
+});
+
 // CSRF
 const tokens = new Csrf();
 app.use(session({
     secret: process.env.CSRF_SEC,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    store
 }));
 app.use((req, res, next) => {
     if (!req.session.csrfSecret) {
@@ -83,7 +96,8 @@ app.use(session({
     name: "my-session-cookie",
     cookie: { secure: true, httpOnly: true, path: '/auth', sameSite: true },
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    store
 }));
 
 // Middleware to protect against HTTP Parameter Pollution attacks
