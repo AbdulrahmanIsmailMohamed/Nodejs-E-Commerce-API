@@ -6,3 +6,4 @@ Requirements-ex.docx
 /__test__
 .nvmrc
 /log
+logger.js

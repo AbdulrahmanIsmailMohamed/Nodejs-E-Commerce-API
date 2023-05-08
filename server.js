@@ -1,3 +1,5 @@
+"use strict";
+
 const path = require('path')
 
 const express = require("express");
@@ -14,7 +16,6 @@ const helmet = require("helmet");
 require("dotenv").config();
 
 const { createWebhookCheckout } = require("./src/controllers/order.controller")
-const logger = require('./logger');
 const errorHandling = require("./src/middlewares/errorHandling");
 const APIError = require("./src/util/APIError");
 
@@ -51,7 +52,8 @@ app.use(`${api}`, express.static(path.join(__dirname, './src/uploads')));
 
 // morgan to log any request
 if (process.env.NODE_ENV === 'development') {
-    // app.use(morgan('dev'));
+    // eslint-disable-next-line global-require
+    const logger = require('./logger');
     app.use(morgan("tiny", { stream: logger.stream }));
     console.log(`mode: ${process.env.NODE_ENV}`);
 }
