@@ -30,9 +30,6 @@
       <a href="#build-with">Build With</a>
     </li>
     <li>
-      <a href="#plans">Plans</a>
-    </li>
-    <li>
       <a href="#installation">Installation</a>
     </li>
     <li>
