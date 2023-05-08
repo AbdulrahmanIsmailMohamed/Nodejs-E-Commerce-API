@@ -172,6 +172,7 @@ List of any major frameworks used to build the project.
 * [Express-Validator](https://www.npmjs.com/package/express-validator) - A library of string validators and sanitizers.
 * [Winston](https://www.npmjs.com/package/winston) - A logger for just about everything.
 * [XSS Clean](https://www.npmjs.com/package/xss-clean) - Middleware to sanitize user input
+* [connect-mongodb-session](https://www.npmjs.com/package/connect-mongodb-session) - provides a MongoDB session store for the popular session middleware express-session. This allows you to store session data in a MongoDB database rather than in memory
 * [Stripe](https://www.npmjs.com/package/stripe) - The Stripe Node library provides convenient access to the Stripe API from applications written in server-side JavaScript.
 * [Eslint](https://www.npmjs.com/package/eslint) - provides a pluggable linting utility for JavaScript. Linting is the process of checking source code for potential errors, code style issues, and other problems. 
 
