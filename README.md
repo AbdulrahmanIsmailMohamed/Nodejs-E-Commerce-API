@@ -52,6 +52,30 @@
 
 Live demo (Feel free to visit) 👉 : [Node.js E-commerce Api](https://nodejs-e-commerce-api.cyclic.app)
 
+# Environment Variables
+
+&nbsp;
+
+```ENV
+PORT = 3333
+NODE_ENV = development
+API = /api/v1
+MONGO_URL = url
+JWT_SEC = 
+JWT_EXPIRE = 
+MAILER_USER = 
+MAILER_PASS = 
+MAILER_HOST = smtp.gmail.com
+MAILER_PORT = 465
+STRIP_SECRET = 
+WEBHOOK_SECRET = 
+CSRF_SEC = 
+SESSION_SEC = 
+```
+
+&nbsp;
+
+
 ## Key Features
 
 * Authentication
