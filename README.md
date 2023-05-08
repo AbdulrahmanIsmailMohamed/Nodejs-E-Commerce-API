@@ -17,6 +17,9 @@
     <li>
       <a href="#deployed-version">Demo</a>
     </li>
+     <li>
+      <a href="#file-structure">File Structure</a>
+    </li>
     <li>
       <a href="#key-features">Key Features</a>
     </li>
@@ -41,6 +44,9 @@
 
   </ol>
 </details>
+
+## file structure
+![GitHub Logo](readme_img/fileStructure.jpg)
 
 ## Deployed Version
 
