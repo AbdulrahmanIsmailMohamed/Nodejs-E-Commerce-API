@@ -90,7 +90,7 @@ SESSION_SEC =
   * Send the verification code to change the password [Public]
 * User
   * Create New User [Admin]
-  * Get All Users [Amin]
+  * Get All Users [Admin]
   * Get User Data Using It's ID [Admin]
   * Update User Profile Image Using It's ID [User]
   * Inactive my account [user]
